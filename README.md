@@ -1,0 +1,1 @@
+This is a small raytracer writen in go for CS 655 Advanced Compouter Graphics
