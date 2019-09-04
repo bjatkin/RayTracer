@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 //V3 is a 4D vector
 type V3 struct {
@@ -9,6 +12,12 @@ type V3 struct {
 
 func (v V3) String() string {
 	return fmt.Sprintf("<%f, %f, %f>", v.x, v.y, v.z)
+}
+
+//Unit returns the unit vector of the given V3
+func Unit(v V3) V3 {
+	mag := math.Sqrt(v.x*v.x + v.y*v.y + v.z*v.z)
+	return DivV3(mag, v)
 }
 
 //AddV3 adds 2 V3's
@@ -35,6 +44,15 @@ func MulV3(s float64, v1 V3) V3 {
 		x: v1.x * s,
 		y: v1.y * s,
 		z: v1.z * s,
+	}
+}
+
+//DivV3 divides a V3 by a scaler
+func DivV3(s float64, v1 V3) V3 {
+	return V3{
+		x: v1.x / s,
+		y: v1.y / s,
+		z: v1.z / s,
 	}
 }
 
