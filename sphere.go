@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -17,7 +16,7 @@ func (s Sphere) Intersect(ray Ray) (V3, bool) {
 
 	d := SubV3(ray.Origin, s.Loc)
 
-	rayDir := Unit(ray.Dir())
+	rayDir := Unit(ray.Dir)
 	b := 2 * DotV3(rayDir, d)
 	c := DotV3(d, d) - (s.Rad * s.Rad)
 
@@ -31,14 +30,12 @@ func (s Sphere) Intersect(ray Ray) (V3, bool) {
 	i2 := (-b - math.Sqrt(disc)) / 2
 	ret := Ray{
 		Origin: ray.Origin,
-		Dest:   AddV3(ray.Origin, rayDir),
+		Dir:    rayDir,
 	}
 
 	if i1 < i2 {
-		fmt.Println(i1, i2)
-		return ret.Scale(i1).Dest, true
+		return ret.Scale(i1).Dest(), true
 	}
 
-	fmt.Println(i1, i2)
-	return ret.Scale(i2).Dest, true
+	return ret.Scale(i2).Dest(), true
 }
