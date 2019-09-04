@@ -14,6 +14,7 @@ func (v V3) String() string {
 	return fmt.Sprintf("<%f, %f, %f>", v.x, v.y, v.z)
 }
 
+//Magnitude is the magnitude of the vector
 func (v V3) Magnitude() float64 {
 	return math.Sqrt(v.x*v.x + v.y*v.y + v.z*v.z)
 }
@@ -106,4 +107,9 @@ func NewMat(x, y int8, data []float64) *Mat {
 		y:    y,
 		data: data,
 	}
+}
+
+//Rad returns the degrees as radians
+func Rad(deg float64) float64 {
+	return deg * (math.Pi / 180)
 }
