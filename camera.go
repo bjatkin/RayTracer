@@ -1,5 +1,10 @@
 package main
 
+import (
+	"fmt"
+	"math"
+)
+
 //Camera is a camera that can be added to the scene
 type Camera struct {
 	Fpoint  V3 //focal point
@@ -12,30 +17,43 @@ type Camera struct {
 }
 
 //Render renders the objects using the given camera
-func (c Camera) Render(out PPM, spheres ...Sphere) {
-	//dist := SubV3(c.Fpoint, c.Lpoint).Magnitude()
-	// Swidth := 2 * ((dist * math.Sin(c.FOVx/2)) / (math.Sin(90 - c.FOVx/2)))
-	// Sheight := 2 * ((dist * math.Sin(c.FOVy/2)) / (math.Sin(90 - c.FOVy/2)))
+func (c Camera) Render(spheres ...Sphere) *PPM {
+	out := NewPPM(c.Width, c.Height)
+	dist := SubV3(c.Fpoint, c.Lpoint).Magnitude()
+	degX := c.FOVx / 2
+	radX := Rad(c.FOVx / 2)
+	degY := c.FOVy / 2
+	radY := Rad(c.FOVy / 2)
+	Vwidth := math.Abs(((dist * math.Sin(radX)) / (math.Sin(Rad(90 - degX)))))
+	Vheight := math.Abs(((dist * math.Sin(radY)) / (math.Sin(Rad(90 - degY)))))
+	fmt.Println(Vwidth, Vheight)
 
-	// Wstep := Swidth / float64(c.Width)
-	// Hstep := Sheight / float64(c.Height)
-
-	for row := 0; row < c.Width; row++ {
-		for col := 0; col < c.Height; col++ {
+	for x := -c.Width / 2; x < c.Width/2; x++ {
+		for y := -c.Height / 2; y < c.Height/2; y++ {
 			//create a new ray
 			r := Ray{
 				Origin: c.Fpoint,
-				Dest:   V3{},
+				Dir: V3{
+					x: float64(x) * (Vwidth / float64(c.Width)),
+					y: float64(y) * (Vheight / float64(c.Height)),
+					z: dist,
+				},
 			}
 
+			hit := false
 			for _, s := range spheres {
 				_, success := s.Intersect(r)
 				if success {
-					out.SetPixel(row, col, s.Color)
-					continue
+					out.SetPixel(y+c.Height/2, x+c.Width/2, s.Color)
+					hit = true
+					break
 				}
-				out.SetPixel(row, col, c.BGColor)
+			}
+			if !hit {
+				out.SetPixel(y+c.Height/2, x+c.Width/2, c.BGColor)
 			}
 		}
 	}
+
+	return out
 }
