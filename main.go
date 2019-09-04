@@ -10,10 +10,10 @@ func main() {
 		Width:   1080,
 		Height:  720,
 		FOVx:    120,
-		FOVy:    98,
+		FOVy:    100,
 		BGColor: RGB{0, 100, 200},
-		Fpoint:  V3{0, 0, 0},
-		Lpoint:  V3{0, 0, 1},
+		Fpoint:  V3{1, 0, 0},
+		Lpoint:  V3{1, 0, -1},
 	}
 
 	out := C.Render(
@@ -23,7 +23,7 @@ func main() {
 			Color: RGB{200, 0, 0},
 		},
 		Sphere{
-			Loc:   V3{3, 3, -5},
+			Loc:   V3{3, 3, -15},
 			Rad:   3,
 			Color: RGB{10, 155, 10},
 		})
