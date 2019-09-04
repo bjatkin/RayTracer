@@ -1,17 +1,37 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
-	s := Sphere{
-		Loc: V3{10, 10, 10},
-		Rad: 5,
+	C := Camera{
+		Width:   1080,
+		Height:  720,
+		FOVx:    120,
+		FOVy:    98,
+		BGColor: RGB{0, 100, 200},
+		Fpoint:  V3{0, 0, 0},
+		Lpoint:  V3{0, 0, 1},
 	}
 
-	r := Ray{
-		Origin: V3{2, 2, 2},
-		Dest:   V3{5, 4.5, 5.5},
-	}
+	out := C.Render(
+		Sphere{
+			Loc:   V3{0, 0, -10},
+			Rad:   1,
+			Color: RGB{200, 0, 0},
+		},
+		Sphere{
+			Loc:   V3{3, 3, -5},
+			Rad:   3,
+			Color: RGB{10, 155, 10},
+		})
 
-	fmt.Println(s.Intersect(r))
+	outFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/test.ppm")
+	if err != nil {
+		fmt.Printf("There was an error: %s", err.Error())
+		return
+	}
+	out.Write(outFile)
 }
