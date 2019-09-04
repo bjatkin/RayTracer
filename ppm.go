@@ -53,5 +53,5 @@ func (rgb RGB) String() string {
 
 //SetPixel colors a pixel at the given x, y coord
 func (p *PPM) SetPixel(x, y int, rgb RGB) {
-	p.pixels[x*p.width+y] = rgb
+	p.pixels[y*p.width+x] = rgb
 }
