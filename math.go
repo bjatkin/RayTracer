@@ -42,7 +42,7 @@ func MulV3(s float64, v1 V3) V3 {
 func CrossV3(v1, v2 V3) V3 {
 	return V3{
 		x: v1.y*v2.z - v1.z*v2.y,
-		y: v1.z*v2.x - v1.x*v1.z,
+		y: v1.z*v2.x - v1.x*v2.z,
 		z: v1.x*v2.y - v1.y*v2.x,
 	}
 }
