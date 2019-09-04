@@ -14,10 +14,13 @@ func (v V3) String() string {
 	return fmt.Sprintf("<%f, %f, %f>", v.x, v.y, v.z)
 }
 
+func (v V3) Magnitude() float64 {
+	return math.Sqrt(v.x*v.x + v.y*v.y + v.z*v.z)
+}
+
 //Unit returns the unit vector of the given V3
 func Unit(v V3) V3 {
-	mag := math.Sqrt(v.x*v.x + v.y*v.y + v.z*v.z)
-	return DivV3(mag, v)
+	return DivV3(v.Magnitude(), v)
 }
 
 //AddV3 adds 2 V3's
