@@ -13,19 +13,52 @@ type Camera struct {
 	FOVx    float64
 	FOVy    float64
 	BGColor RGB
+	Cull    float64
 }
 
 //Render renders the objects using the given camera
 func (c Camera) Render(spheres ...Sphere) *PPM {
-	out := NewPPM(c.Width, c.Height)
-	dist := SubV3(c.Fpoint, c.Lpoint).Magnitude()
+	out := NewPPM(c.Width, c.Height) //the output of the render
+
+	upVector, sideVector := c.stepVectors()
+
+	for x := -c.Width / 2; x < c.Width/2; x++ {
+		for y := -c.Height / 2; y < c.Height/2; y++ {
+			//create a new ray pointing at the viewport
+			r := Ray{
+				Origin: c.Fpoint,
+				Dest:   AddV3(AddV3(c.Lpoint, MulV3(float64(x), upVector)), MulV3(float64(y), sideVector)),
+			}
+
+			hit := false
+			hDist := c.Cull
+			for _, s := range spheres {
+				dist, _, success := s.Intersect(r)
+				if success && dist < hDist {
+					out.SetPixel(x+c.Width/2, y+c.Height/2, s.Color)
+					hit = true
+					hDist = dist
+				}
+			}
+			if !hit {
+				out.SetPixel(x+c.Width/2, y+c.Height/2, c.BGColor)
+			}
+		}
+	}
+
+	return out
+}
+
+func (c Camera) stepVectors() (V3, V3) {
 	look := SubV3(c.Fpoint, c.Lpoint)
-	degX := c.FOVx / 2
+	dist := look.Magnitude()
+
 	radX := Rad(c.FOVx / 2)
-	degY := c.FOVy / 2
 	radY := Rad(c.FOVy / 2)
-	Vwidth := math.Abs(((dist * math.Sin(radX)) / (math.Sin(Rad(90 - degX)))))
-	Vheight := math.Abs(((dist * math.Sin(radY)) / (math.Sin(Rad(90 - degY)))))
+	rad90 := Rad(90)
+
+	Vwidth := math.Abs(((dist * math.Sin(radX)) / (math.Sin(rad90 - radX))))
+	Vheight := math.Abs(((dist * math.Sin(radY)) / (math.Sin(rad90 - radY))))
 
 	upVector := V3{
 		x: 0,
@@ -38,28 +71,5 @@ func (c Camera) Render(spheres ...Sphere) *PPM {
 		z: (-look.x * (Vwidth / float64(c.Width)) / look.z),
 	}
 
-	for x := -c.Width / 2; x < c.Width/2; x++ {
-		for y := -c.Height / 2; y < c.Height/2; y++ {
-			//create a new ray
-			r := Ray{
-				Origin: c.Fpoint,
-				Dest:   AddV3(AddV3(c.Lpoint, MulV3(float64(x), upVector)), MulV3(float64(y), sideVector)),
-			}
-
-			hit := false
-			for _, s := range spheres {
-				_, success := s.Intersect(r)
-				if success {
-					out.SetPixel(x+c.Width/2, y+c.Height/2, s.Color)
-					hit = true
-					break
-				}
-			}
-			if !hit {
-				out.SetPixel(x+c.Width/2, y+c.Height/2, c.BGColor)
-			}
-		}
-	}
-
-	return out
+	return upVector, sideVector
 }

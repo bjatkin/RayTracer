@@ -14,6 +14,7 @@ func main() {
 		BGColor: RGB{0, 100, 200},
 		Fpoint:  V3{1, 0, 0},
 		Lpoint:  V3{1, 0, -1},
+		Cull:    500,
 	}
 
 	out := C.Render(
