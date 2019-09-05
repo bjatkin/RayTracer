@@ -12,7 +12,7 @@ type Sphere struct {
 }
 
 //Intersect takes a ray and returns the nearist intersection
-func (s Sphere) Intersect(ray Ray) (V3, bool) {
+func (s Sphere) Intersect(ray Ray) (float64, V3, bool) {
 
 	d := SubV3(ray.Origin, s.Loc)
 
@@ -23,7 +23,7 @@ func (s Sphere) Intersect(ray Ray) (V3, bool) {
 	disc := b*b - 4*c
 
 	if disc < 0 {
-		return V3{}, false
+		return 0, V3{}, false
 	}
 
 	i1 := (-b + math.Sqrt(disc)) / 2
@@ -34,12 +34,12 @@ func (s Sphere) Intersect(ray Ray) (V3, bool) {
 	}
 
 	if i1 < 0 && i2 < 0 {
-		return V3{}, false
+		return 0, V3{}, false
 	}
 
 	if i1 < i2 {
-		return ret.Scale(i1).Dest, true
+		return i1, ret.Scale(i1).Dest, true
 	}
 
-	return ret.Scale(i2).Dest, true
+	return i2, ret.Scale(i2).Dest, true
 }
