@@ -25,7 +25,7 @@ func main() {
 				Color: RGB{200, 0, 0},
 			},
 			Sphere{
-				Loc:   V3{3, 3, -15},
+				Loc:   V3{3, 0, -15},
 				Rad:   3,
 				Color: RGB{10, 155, 10},
 			}},
@@ -37,11 +37,5 @@ func main() {
 		return
 	}
 
-	ppmFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/test.ppm")
-	if err != nil {
-		fmt.Printf("There was an error: %s", err.Error())
-		return
-	}
 	out.WritePNG(pngFile)
-	out.WritePPM(ppmFile)
 }

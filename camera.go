@@ -31,23 +31,17 @@ func (c Camera) Render(spheres []Sphere, lights []DirLight) *Image {
 			}
 
 			//Find the closest ray collision
-			hit := false
-			// hitLoc := V3{}
 			hDist := c.Clip
+			color := c.BGColor
 			for _, s := range spheres {
 				dist, _, success := s.Intersect(r)
 				if success && dist < hDist {
-					//Color the pixel
-					out.SetPixel(x+c.Width/2, y+c.Height/2, s.Color)
-					// hitLoc = hit
-					hit = true
 					hDist = dist
+					color = s.Color
 				}
 			}
 
-			if !hit {
-				out.SetPixel(x+c.Width/2, y+c.Height/2, c.BGColor)
-			}
+			out.SetPixel(x+c.Width/2, y+c.Height/2, color)
 		}
 	}
 
