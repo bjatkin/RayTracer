@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/png"
 	"io"
 	"strconv"
 	"strings"
@@ -56,6 +57,8 @@ func (p *Image) WritePNG(dest io.Writer) {
 			})
 		}
 	}
+
+	png.Encode(dest, out)
 }
 
 //RGB is an rgb color with rgb values between 0 and 255

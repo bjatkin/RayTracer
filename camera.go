@@ -13,12 +13,12 @@ type Camera struct {
 	FOVx    float64
 	FOVy    float64
 	BGColor RGB
-	Cull    float64
+	Clip    float64
 }
 
 //Render renders the objects using the given camera
-func (c Camera) Render(spheres ...Sphere) *PPM {
-	out := NewPPM(c.Width, c.Height) //the output of the render
+func (c Camera) Render(spheres []Sphere, lights []DirLight) *Image {
+	out := NewImage(c.Width, c.Height) //the output of the render
 
 	upVector, sideVector := c.stepVectors()
 
@@ -30,16 +30,21 @@ func (c Camera) Render(spheres ...Sphere) *PPM {
 				Dest:   AddV3(AddV3(c.Lpoint, MulV3(float64(x), upVector)), MulV3(float64(y), sideVector)),
 			}
 
+			//Find the closest ray collision
 			hit := false
-			hDist := c.Cull
+			// hitLoc := V3{}
+			hDist := c.Clip
 			for _, s := range spheres {
 				dist, _, success := s.Intersect(r)
 				if success && dist < hDist {
+					//Color the pixel
 					out.SetPixel(x+c.Width/2, y+c.Height/2, s.Color)
+					// hitLoc = hit
 					hit = true
 					hDist = dist
 				}
 			}
+
 			if !hit {
 				out.SetPixel(x+c.Width/2, y+c.Height/2, c.BGColor)
 			}
