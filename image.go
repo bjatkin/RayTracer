@@ -74,6 +74,15 @@ func (rgb RGB) String() string {
 		strconv.FormatInt(int64(rgb.B), 10)
 }
 
+//V3 converts an RGB to a V3
+func (rgb RGB) V3() V3 {
+	return V3{
+		x: float64(rgb.R) / 255,
+		y: float64(rgb.G) / 255,
+		z: float64(rgb.B) / 255,
+	}
+}
+
 //SetPixel colors a pixel at the given x, y coord
 func (p *Image) SetPixel(x, y int, rgb RGB) {
 	p.pixels[y*p.width+x] = rgb

@@ -19,6 +19,33 @@ func (v V3) Magnitude() float64 {
 	return math.Sqrt(v.x*v.x + v.y*v.y + v.z*v.z)
 }
 
+//RGB converts a vector into an rgb object
+func (v V3) RGB() RGB {
+	if v.x < 0 {
+		v.x = 0
+	}
+	if v.y < 0 {
+		v.y = 0
+	}
+	if v.z < 0 {
+		v.z = 0
+	}
+	if v.x > 1 {
+		v.x = 1
+	}
+	if v.y > 1 {
+		v.y = 1
+	}
+	if v.z > 1 {
+		v.z = 1
+	}
+	return RGB{
+		R: uint8(v.x * 255),
+		G: uint8(v.y * 255),
+		B: uint8(v.z * 255),
+	}
+}
+
 //Unit returns the unit vector of the given V3
 func Unit(v V3) V3 {
 	return DivV3(v.Magnitude(), v)
@@ -51,6 +78,15 @@ func MulV3(s float64, v1 V3) V3 {
 	}
 }
 
+//FlatMulV3 multiples each element by the corsponding element in the other vector
+func FlatMulV3(v1, v2 V3) V3 {
+	return V3{
+		x: v1.x * v2.x,
+		y: v1.y * v2.y,
+		z: v1.z * v2.z,
+	}
+}
+
 //DivV3 divides a V3 by a scaler
 func DivV3(s float64, v1 V3) V3 {
 	return V3{
@@ -72,6 +108,13 @@ func CrossV3(v1, v2 V3) V3 {
 //DotV3 is the dot product of 2 v3's
 func DotV3(v1, v2 V3) float64 {
 	return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z
+}
+
+//ReflectV3 is the reflection of one vector 3 across another
+func ReflectV3(d, n V3) V3 {
+	n = Unit(n)
+	d = MulV3(-1, d)
+	return SubV3(d, MulV3(2*DotV3(d, n), n))
 }
 
 //V4 is a 4D vector

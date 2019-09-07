@@ -6,14 +6,15 @@ import (
 
 //Camera is a camera that can be added to the scene
 type Camera struct {
-	Fpoint  V3 //focal point
-	Lpoint  V3 //look at point
-	Width   int
-	Height  int
-	FOVx    float64
-	FOVy    float64
-	BGColor RGB
-	Clip    float64
+	Fpoint       V3 //focal point
+	Lpoint       V3 //look at point
+	Width        int
+	Height       int
+	FOVx         float64
+	FOVy         float64
+	BGColor      RGB
+	Clip         float64
+	AmbientLight RGB
 }
 
 //Render renders the objects using the given camera
@@ -34,10 +35,11 @@ func (c Camera) Render(spheres []Sphere, lights []DirLight) *Image {
 			hDist := c.Clip
 			color := c.BGColor
 			for _, s := range spheres {
-				dist, _, success := s.Intersect(r)
+				dist, hit, success := s.Intersect(r)
 				if success && dist < hDist {
 					hDist = dist
-					color = s.Color
+					ptNormal := Unit(SubV3(hit, s.Loc))
+					color = calculateColor(c.AmbientLight, hit, ptNormal, SubV3(c.Fpoint, hit), s.Mat, lights)
 				}
 			}
 
@@ -71,4 +73,29 @@ func (c Camera) stepVectors() (V3, V3) {
 	}
 
 	return upVector, sideVector
+}
+
+func calculateColor(ambLight RGB, point V3, normal V3, toView V3, mat Material, lights []DirLight) RGB {
+	//Calculate the lighting portion of the lighting equation
+	color := FlatMulV3(MulV3(mat.AmbCoeff, ambLight.V3()), mat.DiffColor.V3())
+	diffCol := MulV3(mat.DiffCoeff, mat.DiffColor.V3())
+	specCol := MulV3(mat.SpecCoeff, mat.SpecColor.V3())
+
+	for _, l := range lights {
+		diffDir := DotV3(Unit(normal), Unit(l.Dir))
+		diff := V3{}
+		if diffDir > 0 {
+			diff = MulV3(diffDir, diffCol)
+		}
+
+		specDir := DotV3(Unit(ReflectV3(l.Dir, normal)), Unit(toView))
+		spec := V3{}
+		if specDir > 0 {
+			spec = MulV3(math.Pow(specDir, mat.Phong), specCol)
+		}
+
+		color = AddV3(color, FlatMulV3(l.Color.V3(), AddV3(diff, spec)))
+	}
+
+	return color.RGB()
 }

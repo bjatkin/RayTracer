@@ -6,9 +6,9 @@ import (
 
 //Sphere is a sphere that can be rendered
 type Sphere struct {
-	Loc   V3
-	Rad   float64
-	Color RGB
+	Loc V3
+	Rad float64
+	Mat Material
 }
 
 //Intersect takes a ray and returns the nearist intersection
