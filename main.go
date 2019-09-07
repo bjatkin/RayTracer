@@ -19,7 +19,7 @@ func main() {
 	}
 
 	out := C.Render(
-		[]Sphere{
+		&[]Sphere{
 			Sphere{
 				Loc: V3{0, 3, -10},
 				Rad: 1,
@@ -46,7 +46,7 @@ func main() {
 					Phong:      1,
 				},
 			}},
-		[]DirLight{
+		&[]DirLight{
 			DirLight{
 				Color: RGB{200, 200, 175},
 				Dir:   V3{-1, -1, 0},

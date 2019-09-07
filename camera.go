@@ -18,7 +18,7 @@ type Camera struct {
 }
 
 //Render renders the objects using the given camera
-func (c Camera) Render(spheres []Sphere, lights []DirLight) *Image {
+func (c Camera) Render(spheres *[]Sphere, lights *[]DirLight) *Image {
 	out := NewImage(c.Width, c.Height) //the output of the render
 
 	upVector, sideVector := c.stepVectors()
@@ -34,8 +34,8 @@ func (c Camera) Render(spheres []Sphere, lights []DirLight) *Image {
 			//Find the closest ray collision
 			hDist := c.Clip
 			color := c.BGColor
-			for _, s := range spheres {
-				dist, hit, success := s.Intersect(r)
+			for _, s := range *spheres {
+				dist, hit, success := s.Intersect(&r)
 				if success && dist < hDist {
 					hDist = dist
 					ptNormal := Unit(SubV3(hit, s.Loc))
@@ -75,13 +75,13 @@ func (c Camera) stepVectors() (V3, V3) {
 	return upVector, sideVector
 }
 
-func calculateColor(ambLight RGB, point V3, normal V3, toView V3, mat Material, lights []DirLight) RGB {
+func calculateColor(ambLight RGB, point V3, normal V3, toView V3, mat Material, lights *[]DirLight) RGB {
 	//Calculate the lighting portion of the lighting equation
 	color := FlatMulV3(MulV3(mat.AmbCoeff, ambLight.V3()), mat.DiffColor.V3())
 	diffCol := MulV3(mat.DiffCoeff, mat.DiffColor.V3())
 	specCol := MulV3(mat.SpecCoeff, mat.SpecColor.V3())
 
-	for _, l := range lights {
+	for _, l := range *lights {
 		diffDir := DotV3(Unit(normal), Unit(l.Dir))
 		diff := V3{}
 		if diffDir > 0 {
