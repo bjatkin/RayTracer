@@ -78,8 +78,8 @@ func MulV3(s float64, v1 V3) V3 {
 	}
 }
 
-//FlatMulV3 multiples each element by the corsponding element in the other vector
-func FlatMulV3(v1, v2 V3) V3 {
+//HadMulV3 multiples each element by the corsponding element in the other vector
+func HadMulV3(v1, v2 V3) V3 {
 	return V3{
 		x: v1.x * v2.x,
 		y: v1.y * v2.y,

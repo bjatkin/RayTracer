@@ -77,7 +77,7 @@ func (c Camera) stepVectors() (V3, V3) {
 
 func calculateColor(ambLight RGB, point V3, normal V3, toView V3, mat Material, lights *[]DirLight) RGB {
 	//Calculate the lighting portion of the lighting equation
-	color := FlatMulV3(MulV3(mat.AmbCoeff, ambLight.V3()), mat.DiffColor.V3())
+	color := HadMulV3(MulV3(mat.AmbCoeff, ambLight.V3()), mat.DiffColor.V3())
 	diffCol := MulV3(mat.DiffCoeff, mat.DiffColor.V3())
 	specCol := MulV3(mat.SpecCoeff, mat.SpecColor.V3())
 
@@ -94,7 +94,7 @@ func calculateColor(ambLight RGB, point V3, normal V3, toView V3, mat Material, 
 			spec = MulV3(math.Pow(specDir, mat.Phong), specCol)
 		}
 
-		color = AddV3(color, FlatMulV3(l.Color.V3(), AddV3(diff, spec)))
+		color = AddV3(color, HadMulV3(l.Color.V3(), AddV3(diff, spec)))
 	}
 
 	return color.RGB()
