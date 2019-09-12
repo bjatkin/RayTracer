@@ -46,10 +46,14 @@ func main() {
 					Phong:      1,
 				},
 			}},
-		&[]DirLight{
-			DirLight{
+		&[]Light{
+			&DirLight{
 				Color: RGB{200, 200, 175},
 				Dir:   V3{-1, -1, 0},
+			},
+			&PointLight{
+				Color: RGB{200, 30, 0},
+				Loc:   V3{0, 0, 0},
 			},
 		})
 
@@ -60,5 +64,4 @@ func main() {
 	}
 
 	out.WritePNG(pngFile)
-	fmt.Println(ReflectV3(V3{0, 0, -1}, V3{0, 1, 0}))
 }

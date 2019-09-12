@@ -11,7 +11,7 @@ type Ray struct {
 	Dest         V3
 	Children     *[]Ray
 	Spheres      *[]Sphere
-	Lights       *[]DirLight
+	Lights       *[]Light
 	MaxLength    float64
 	BGColor      RGB
 	AmbientLight RGB
@@ -66,26 +66,27 @@ func (r *Ray) Dir() V3 {
 	return r.dir
 }
 
-func calculateColor(ambLight RGB, point V3, normal V3, toView V3, mat Material, lights *[]DirLight) RGB {
+func calculateColor(ambLight RGB, point V3, normal V3, toView V3, mat Material, lights *[]Light) RGB {
 	//Calculate the lighting portion of the lighting equation
 	color := HadMulV3(MulV3(mat.AmbCoeff, ambLight.V3()), mat.DiffColor.V3())
 	diffCol := MulV3(mat.DiffCoeff, mat.DiffColor.V3())
 	specCol := MulV3(mat.SpecCoeff, mat.SpecColor.V3())
 
 	for _, l := range *lights {
-		diffDir := DotV3(Unit(normal), Unit(l.Dir))
+		dir := l.ToLight(point)
+		diffDir := DotV3(Unit(normal), Unit(dir)) //l.Dir))
 		diff := V3{}
 		if diffDir > 0 {
 			diff = MulV3(diffDir, diffCol)
 		}
 
-		specDir := DotV3(Unit(ReflectV3(l.Dir, normal)), Unit(toView))
+		specDir := DotV3(Unit(ReflectV3(dir, normal)), Unit(toView))
 		spec := V3{}
 		if specDir > 0 {
 			spec = MulV3(math.Pow(specDir, mat.Phong), specCol)
 		}
 
-		color = AddV3(color, HadMulV3(l.Color.V3(), AddV3(diff, spec)))
+		color = AddV3(color, HadMulV3(l.GetColor().V3(), AddV3(diff, spec)))
 	}
 
 	return color.RGB()

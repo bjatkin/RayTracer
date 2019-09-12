@@ -18,7 +18,7 @@ type Camera struct {
 }
 
 //Render renders the objects using the given camera
-func (c Camera) Render(spheres *[]Sphere, lights *[]DirLight) *Image {
+func (c Camera) Render(spheres *[]Sphere, lights *[]Light) *Image {
 	out := NewImage(c.Width, c.Height) //the output of the render
 
 	upVector, sideVector := c.stepVectors()
