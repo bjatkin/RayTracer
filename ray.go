@@ -10,15 +10,18 @@ type Ray struct {
 	Origin       V3
 	Dest         V3
 	Children     *[]Ray
-	Spheres      *[]Sphere
+	Objects      *[]Object
 	Lights       *[]Light
 	MaxLength    float64
 	BGColor      RGB
 	AmbientLight RGB
 	CameraOrg    V3
 
+	//Do some caching so we don't recalculate the same thing over and over
 	dir    V3
-	dirSet bool //cache direction in the case of repeted calls
+	dirSet bool
+	len    float64
+	lenSet bool
 }
 
 func (r *Ray) String() string {
@@ -40,17 +43,25 @@ func (r *Ray) Scale(s float64) Ray {
 	}
 }
 
+//Length returns the lenght of the light ray
+func (r *Ray) Length() float64 {
+	if !r.lenSet {
+		r.len = DotV3(r.Dir(), r.Dir())
+		r.lenSet = true
+	}
+	return r.len
+}
+
 //Color calculate of the ray
 func (r *Ray) Color() RGB {
 	//Find the closest ray collision
 	hDist := r.MaxLength
 	color := r.BGColor
-	for _, s := range *r.Spheres {
-		dist, hit, success := s.Intersect(r)
+	for _, o := range *r.Objects {
+		dist, hit, success := o.Intersect(r)
 		if success && dist < hDist {
 			hDist = dist
-			ptNormal := Unit(SubV3(hit, s.Loc))
-			color = calculateColor(r.AmbientLight, hit, ptNormal, SubV3(hit, r.CameraOrg), s.Mat, r.Lights)
+			color = r.calculateColor(hit, o)
 		}
 	}
 
@@ -66,14 +77,35 @@ func (r *Ray) Dir() V3 {
 	return r.dir
 }
 
-func calculateColor(ambLight RGB, point V3, normal V3, toView V3, mat Material, lights *[]Light) RGB {
+func (r *Ray) calculateColor(point V3, o Object) RGB {
+	ambLight := r.AmbientLight
+	normal := o.Normal(point)
+	mat := o.GetMat()
+	toView := SubV3(r.CameraOrg, point)
 	//Calculate the lighting portion of the lighting equation
 	color := HadMulV3(MulV3(mat.AmbCoeff, ambLight.V3()), mat.DiffColor.V3())
 	diffCol := MulV3(mat.DiffCoeff, mat.DiffColor.V3())
 	specCol := MulV3(mat.SpecCoeff, mat.SpecColor.V3())
 
-	for _, l := range *lights {
+	for _, l := range *r.Lights {
 		dir := l.ToLight(point)
+		// cast a shadow ray to see if we need to calculate this light
+		sRay := Ray{
+			Origin:    AddV3(point, MulV3(0.0001, dir)), //shift along dir so we don't collide with the same object
+			Dest:      AddV3(point, dir),
+			MaxLength: r.MaxLength,
+		}
+		shadow := false
+		for _, o := range *r.Objects {
+			if dist, _, cross := o.Intersect(&sRay); cross && dist < sRay.Length() {
+				shadow = true
+				break
+			}
+		}
+		if shadow {
+			continue
+		}
+
 		diffDir := DotV3(Unit(normal), Unit(dir)) //l.Dir))
 		diff := V3{}
 		if diffDir > 0 {
