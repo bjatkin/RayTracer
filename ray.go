@@ -90,23 +90,32 @@ func (r *Ray) calculateColor(point V3, o Object) RGB {
 	for _, l := range *r.Lights {
 		dir := l.ToLight(point)
 		// cast a shadow ray to see if we need to calculate this light
+		org := AddV3(point, MulV3(0.00000001, dir))
 		sRay := Ray{
-			Origin:    AddV3(point, MulV3(0.0001, dir)), //shift along dir so we don't collide with the same object
-			Dest:      AddV3(point, dir),
+			Origin:    org, //shift along dir so we don't collide with the same object
+			Dest:      AddV3(org, dir),
 			MaxLength: r.MaxLength,
 		}
 		shadow := false
 		for _, o := range *r.Objects {
-			if dist, _, cross := o.Intersect(&sRay); cross && dist < sRay.Length() {
-				shadow = true
-				break
+			dist, _, cross := o.Intersect(&sRay)
+			if cross { //&& dist < sRay.Length() {
+				test := Ray{
+					Origin: org,
+					Dest:   AddV3(org, Unit(sRay.Dir())),
+				}
+				test = test.Scale(dist)
+				if sRay.Length() > test.Length() {
+					shadow = true
+					break
+				}
 			}
 		}
 		if shadow {
 			continue
 		}
 
-		diffDir := DotV3(Unit(normal), Unit(dir)) //l.Dir))
+		diffDir := DotV3(Unit(normal), Unit(dir))
 		diff := V3{}
 		if diffDir > 0 {
 			diff = MulV3(diffDir, diffCol)

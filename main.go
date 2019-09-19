@@ -17,100 +17,83 @@ func main() {
 		Clip:         5000,
 		AmbientLight: RGB{100, 100, 100},
 	}
+	red := Material{
+		AmbCoeff:   0.5,
+		DiffCoeff:  0.4,
+		DiffColor:  RGB{240, 20, 20},
+		SpecCoeff:  0.6,
+		SpecColor:  RGB{240, 20, 20},
+		TransCoeff: 0.5,
+		Phong:      50,
+	}
+	yellow := Material{
+		AmbCoeff:   0.5,
+		DiffCoeff:  0.8,
+		DiffColor:  RGB{230, 200, 40},
+		SpecCoeff:  0.2,
+		SpecColor:  RGB{255, 255, 255},
+		TransCoeff: 0.5,
+		Phong:      1,
+	}
+	white := Material{
+		AmbCoeff:   0.1,
+		DiffCoeff:  0.9,
+		DiffColor:  RGB{255, 255, 255},
+		SpecCoeff:  0.2,
+		SpecColor:  RGB{255, 255, 255},
+		TransCoeff: 0.5,
+		Phong:      1,
+	}
+	blue := Material{
+		AmbCoeff:   0.5,
+		DiffCoeff:  0.4,
+		DiffColor:  RGB{0, 155, 200},
+		SpecCoeff:  0.6,
+		SpecColor:  RGB{0, 155, 200},
+		TransCoeff: 0.5,
+		Phong:      50,
+	}
 
 	out := C.Render(
 		&[]Object{
 			&Sphere{
-				Loc: V3{0, 3, -10},
+				Loc: V3{5, 0, -10},
 				Rad: 1,
-				Mat: Material{
-					AmbCoeff:   0.5,
-					DiffCoeff:  0.4,
-					DiffColor:  RGB{240, 20, 20},
-					SpecCoeff:  0.6,
-					SpecColor:  RGB{240, 20, 20},
-					TransCoeff: 0.5,
-					Phong:      50,
-				},
+				Mat: red,
 			},
 			&Sphere{
-				Loc: V3{3, 0, -15},
-				Rad: 3,
-				Mat: Material{
-					AmbCoeff:   0.5,
-					DiffCoeff:  0.8,
-					DiffColor:  RGB{230, 200, 40},
-					SpecCoeff:  0.2,
-					SpecColor:  RGB{255, 255, 255},
-					TransCoeff: 0.5,
-					Phong:      1,
-				},
+				Loc: V3{-5, 0, -10},
+				Rad: 1.2,
+				Mat: yellow,
 			},
 			&Plane{
-				Points: [3]V3{V3{2, -3, -13}, V3{2, 3, -13}, V3{-1.5, 0, -10}},
-				Mat: Material{
-					AmbCoeff:   0.5,
-					DiffCoeff:  0.4,
-					DiffColor:  RGB{0, 155, 200},
-					SpecCoeff:  0.6,
-					SpecColor:  RGB{0, 155, 200},
-					TransCoeff: 0.5,
-					Phong:      50,
-				},
+				Points: [3]V3{V3{-3, -3, -20}, V3{3, -3, -20}, V3{-3, 3, -20}},
+				Mat:    blue,
 			},
 			&Plane{
-				Points: [3]V3{V3{13, 0, 0}, V3{13, 0, -40}, V3{13, -40, 0}},
-				Mat: Material{
-					AmbCoeff:   0.1,
-					DiffCoeff:  0.9,
-					DiffColor:  RGB{50, 215, 105},
-					SpecCoeff:  0.6,
-					SpecColor:  RGB{50, 215, 105},
-					TransCoeff: 0.5,
-					Phong:      50,
-				},
+				Points: [3]V3{V3{3, 3, -20}, V3{-3, 3, -20}, V3{3, -3, -20}},
+				Mat:    blue,
 			},
-			&Plane{
-				Points: [3]V3{V3{13, 0, 0}, V3{13, 0, -40}, V3{13, 40, 0}},
-				Mat: Material{
-					AmbCoeff:   0.1,
-					DiffCoeff:  0.9,
-					DiffColor:  RGB{50, 215, 105},
-					SpecCoeff:  0.6,
-					SpecColor:  RGB{50, 215, 105},
-					TransCoeff: 0.5,
-					Phong:      50,
-				},
-				Flipped: true,
+			&Sphere{
+				Loc: V3{0, 0, -12},
+				Rad: .5,
+				Mat: white,
 			},
-			// &Sphere{
-			// 	Loc: V3{4, 0, -10},
-			// 	Rad: .5,
-			// 	Mat: Material{
-			// 		AmbCoeff:   0.1,
-			// 		DiffCoeff:  0.9,
-			// 		DiffColor:  RGB{255, 255, 255},
-			// 		SpecCoeff:  0.2,
-			// 		SpecColor:  RGB{255, 255, 255},
-			// 		TransCoeff: 0.5,
-			// 		Phong:      1,
-			// 	},
-			// },
 		},
 		&[]Light{
-			// &DirLight{
-			// 	Color: RGB{50, 50, 75},
-			// 	Dir:   V3{-1, -1, 0},
-			//  MaxDist: 5000,
-			// },
-			&PointLight{
-				Color: RGB{50, 50, 75},
-				Loc:   V3{4, 0, -10},
+			&DirLight{
+				Color:   RGB{150, 150, 175},
+				Dir:     V3{-1, -1, 0},
+				MaxDist: 5000,
 			},
 			// &PointLight{
-			// 	Color: RGB{50, 50, 75},
-			// 	Loc:   V3{10, -10, -15},
+			// 	Color: RGB{255, 255, 255},
+			// 	Loc:   V3{-100, 30, -15},
 			// },
+			&PointLight{
+				Color: RGB{50, 50, 100},
+				Loc:   V3{0, 0, -10},
+			},
 		})
 
 	pngFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/test.png")

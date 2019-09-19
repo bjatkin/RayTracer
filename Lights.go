@@ -14,7 +14,7 @@ type PointLight struct {
 
 //ToLight is the non normalized vector from the point to the light
 func (l *PointLight) ToLight(from V3) V3 {
-	return SubV3(from, l.Loc)
+	return SubV3(l.Loc, from)
 }
 
 //GetColor returns the color of the light
@@ -31,6 +31,7 @@ type DirLight struct {
 
 //ToLight is the vector direction of the light
 func (l *DirLight) ToLight(from V3) V3 {
+	// return l.Dir
 	return MulV3(l.MaxDist, l.Dir)
 }
 
