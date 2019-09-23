@@ -37,7 +37,7 @@ func (c Camera) Render(objects *[]Object, lights *[]Light) *Image {
 				Lights:       lights,
 			}
 
-			out.SetPixel(x+c.Width/2, y+c.Height/2, r.Color())
+			out.SetPixel(x+c.Width/2, y+c.Height/2, r.Color(5))
 		}
 	}
 
