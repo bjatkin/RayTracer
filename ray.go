@@ -57,12 +57,19 @@ func (r *Ray) Color(depth int) RGB {
 	//Find the closest ray collision
 	hDist := r.MaxLength
 	color := r.BGColor
+	hO := (*r.Objects)[0]
+	hPoint := V3{}
 	for _, o := range *r.Objects {
 		dist, hit, success := o.Intersect(r)
 		if success && dist < hDist {
 			hDist = dist
-			color = r.calculateColor(hit, o, depth)
+			hO = o
+			hPoint = hit
 		}
+	}
+
+	if hDist != r.MaxLength {
+		color = r.calculateColor(hPoint, hO, depth)
 	}
 
 	return color
@@ -81,7 +88,7 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 	ambLight := r.AmbientLight
 	normal := o.Normal(point)
 	mat := o.GetMat()
-	toView := SubV3(r.CameraOrg, point)
+	toView := SubV3(point, r.CameraOrg)
 	//Calculate the lighting portion of the lighting equation
 	color := HadMulV3(MulV3(mat.AmbCoeff, ambLight.V3()), mat.DiffColor.V3())
 	diffCol := MulV3(mat.DiffCoeff, mat.DiffColor.V3())
@@ -99,7 +106,7 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 		shadow := false
 		for _, o := range *r.Objects {
 			dist, _, cross := o.Intersect(&sRay)
-			if cross { //&& dist < sRay.Length() {
+			if cross {
 				test := Ray{
 					Origin: org,
 					Dest:   AddV3(org, Unit(sRay.Dir())),
@@ -114,60 +121,65 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 		if shadow {
 			continue
 		}
-		// cast a reflection ray
-		reflectColor := V3{}
-		depth--
-		if o.GetMat().ReflectCoeff > 0 && depth > 0 {
-			reflectV3 := ReflectV3(dir, normal)
-			apex := AddV3(point, MulV3(0.00000001, reflectV3))
-			reflect := Ray{
-				Origin:       apex,
-				Dest:         AddV3(apex, reflectV3),
-				MaxLength:    r.MaxLength,
-				Objects:      r.Objects,
-				Lights:       r.Lights,
-				BGColor:      r.BGColor,
-				AmbientLight: r.AmbientLight,
-				CameraOrg:    r.CameraOrg,
-			}
-			reflectColor = MulV3(o.GetMat().ReflectCoeff, reflect.Color(depth).V3())
-		}
-		// cast a transmission ray
-		transColor := V3{}
-		if o.GetMat().TransCoeff > 0 && depth > 0 {
-			I := Unit(r.Dir())
-			N := Unit(normal)
-			cos := DotV3(I, N) / (I.Magnitude() * N.Magnitude())
-			nit := o.GetMat().RefractCoeff
-			tdir := AddV3(MulV3(nit, I), MulV3((nit*cos-math.Sqrt(1+nit*nit*(cos*cos-1))), N))
-			apex := AddV3(point, MulV3(0.00000001, tdir))
-			tRay := Ray{
-				Origin:       apex,
-				Dest:         AddV3(apex, tdir),
-				MaxLength:    r.MaxLength,
-				Objects:      r.Objects,
-				Lights:       r.Lights,
-				BGColor:      r.BGColor,
-				AmbientLight: r.AmbientLight,
-				CameraOrg:    r.CameraOrg,
-			}
-			transColor = MulV3(o.GetMat().TransCoeff, tRay.Color(depth).V3())
-		}
-
-		diffDir := DotV3(Unit(normal), Unit(dir))
 		diff := V3{}
+		diffDir := DotV3(Unit(normal), Unit(dir))
 		if diffDir > 0 {
 			diff = MulV3(diffDir, diffCol)
 		}
 
-		specDir := DotV3(Unit(ReflectV3(dir, normal)), Unit(toView))
 		spec := V3{}
+		specDir := DotV3(Unit(ReflectV3(dir, normal)), Unit(toView))
 		if specDir > 0 {
 			spec = MulV3(math.Pow(specDir, mat.Phong), specCol)
 		}
 
-		color = AddV3(transColor, AddV3(reflectColor, AddV3(color, HadMulV3(l.GetColor().V3(), AddV3(diff, spec)))))
+		color = AddV3(color, HadMulV3(l.GetColor().V3(), AddV3(diff, spec)))
 	}
 
-	return color.RGB()
+	depth--
+	// cast a reflection ray
+	reflectColor := V3{}
+	if o.GetMat().ReflectCoeff > 0 && depth >= 0 {
+		reflectV3 := Unit(ReflectV3(r.Dir(), o.Normal(point)))
+		apex := AddV3(point, MulV3(0.000000001, reflectV3))
+		reflect := Ray{
+			Origin:       apex,
+			Dest:         AddV3(apex, reflectV3),
+			MaxLength:    r.MaxLength,
+			Objects:      r.Objects,
+			Lights:       r.Lights,
+			BGColor:      r.BGColor,
+			AmbientLight: r.AmbientLight,
+			CameraOrg:    r.CameraOrg,
+		}
+		reflectColor = MulV3(o.GetMat().ReflectCoeff, reflect.Color(depth).V3())
+	}
+
+	// cast a transmission ray
+	transColor := V3{}
+	if o.GetMat().TransCoeff > 0 && depth >= 0 {
+		I := Unit(r.Dir())
+		N := Unit(normal)
+		cos := math.Cos(Rad(math.Acos(DotV3(I, N))))
+		nit := o.GetMat().RefractCoeff
+
+		p1 := MulV3(nit, I)
+		p2 := math.Sqrt(1 + nit*nit*(cos*cos-1))
+		p3 := nit*cos - p2
+		tdir := AddV3(p1, MulV3(p3, N))
+		apex := AddV3(point, MulV3(0.00001, tdir))
+		tRay := Ray{
+			Origin:       apex,
+			Dest:         AddV3(apex, tdir),
+			MaxLength:    r.MaxLength,
+			Objects:      r.Objects,
+			Lights:       r.Lights,
+			BGColor:      r.BGColor,
+			AmbientLight: r.AmbientLight,
+			CameraOrg:    r.CameraOrg,
+		}
+		transColor = MulV3(o.GetMat().TransCoeff, tRay.Color(depth).V3())
+	}
+
+	return AddV3(transColor, AddV3(reflectColor, color)).RGB()
 }

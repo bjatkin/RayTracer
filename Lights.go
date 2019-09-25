@@ -31,8 +31,8 @@ type DirLight struct {
 
 //ToLight is the vector direction of the light
 func (l *DirLight) ToLight(from V3) V3 {
-	// return l.Dir
-	return MulV3(l.MaxDist, l.Dir)
+	return l.Dir
+	//return MulV3(l.MaxDist, l.Dir)
 }
 
 //GetColor returns the color of the light

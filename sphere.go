@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -48,6 +49,10 @@ func (s Sphere) Intersect(ray *Ray) (float64, V3, bool) {
 			Origin: ray.Origin,
 			Dest:   AddV3(ray.Origin, rayDir),
 		}
+		if (SubV3(ret.Scale(i2).Dest, s.Loc)).Magnitude()-s.Rad > 0.0001 {
+			fmt.Printf("ERROR Dist: %f, Rad: %f!\n", DotV3((SubV3(ret.Scale(i2).Dest, s.Loc)), SubV3(ret.Scale(i2).Dest, s.Loc)), s.Rad)
+		}
+
 		return i2, ret.Scale(i2).Dest, true
 
 	}
@@ -57,6 +62,9 @@ func (s Sphere) Intersect(ray *Ray) (float64, V3, bool) {
 		ret := Ray{
 			Origin: ray.Origin,
 			Dest:   AddV3(ray.Origin, rayDir),
+		}
+		if (SubV3(ret.Scale(i2).Dest, s.Loc)).Magnitude()-s.Rad > 0.0001 {
+			fmt.Printf("ERROR Dist: %f, Rad: %f!\n", DotV3((SubV3(ret.Scale(i2).Dest, s.Loc)), SubV3(ret.Scale(i2).Dest, s.Loc)), s.Rad)
 		}
 		return i1, ret.Scale(i1).Dest, true
 	}

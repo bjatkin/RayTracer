@@ -113,8 +113,8 @@ func DotV3(v1, v2 V3) float64 {
 //ReflectV3 is the reflection of one vector 3 across another
 func ReflectV3(d, n V3) V3 {
 	n = Unit(n)
-	d = MulV3(-1, d)
-	return SubV3(d, MulV3(2*DotV3(d, n), n))
+	d = Unit(MulV3(-1, d))
+	return SubV3(MulV3(2*DotV3(d, n), n), d)
 }
 
 //V4 is a 4D vector
