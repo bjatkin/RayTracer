@@ -23,10 +23,8 @@ func main() {
 		DiffColor:    RGB{255, 255, 255},
 		SpecCoeff:    0.6,
 		SpecColor:    RGB{255, 255, 255},
-		TransCoeff:   0.0,
 		Phong:        150,
 		ReflectCoeff: 0.6,
-		RefractCoeff: 1.1,
 	}
 	S2 := Material{
 		AmbCoeff:     0.0,
@@ -36,38 +34,31 @@ func main() {
 		SpecColor:    RGB{255, 255, 255},
 		TransCoeff:   1,
 		Phong:        200,
-		ReflectCoeff: 0.0,
-		RefractCoeff: 0.965,
+		RefractCoeff: 0.875,
 	}
 	whiteWall := Material{
-		AmbCoeff:     0.1,
-		DiffCoeff:    0.8,
-		DiffColor:    RGB{255, 255, 255},
-		SpecCoeff:    0.2,
-		SpecColor:    RGB{255, 255, 255},
-		TransCoeff:   0,
-		Phong:        10,
-		ReflectCoeff: 0,
+		AmbCoeff:  0.1,
+		DiffCoeff: 0.8,
+		DiffColor: RGB{255, 255, 255},
+		SpecCoeff: 0.2,
+		SpecColor: RGB{255, 255, 255},
+		Phong:     10,
 	}
 	redWall := Material{
-		AmbCoeff:     0.1,
-		DiffCoeff:    0.8,
-		DiffColor:    RGB{170, 30, 30},
-		SpecCoeff:    0.2,
-		SpecColor:    RGB{255, 255, 255},
-		TransCoeff:   0,
-		Phong:        10,
-		ReflectCoeff: 0,
+		AmbCoeff:  0.1,
+		DiffCoeff: 0.8,
+		DiffColor: RGB{170, 30, 30},
+		SpecCoeff: 0.2,
+		SpecColor: RGB{255, 255, 255},
+		Phong:     10,
 	}
 	blueWall := Material{
-		AmbCoeff:     0.1,
-		DiffCoeff:    0.8,
-		DiffColor:    RGB{0, 60, 170},
-		SpecCoeff:    0.2,
-		SpecColor:    RGB{255, 255, 255},
-		TransCoeff:   0,
-		Phong:        10,
-		ReflectCoeff: 0,
+		AmbCoeff:  0.1,
+		DiffCoeff: 0.8,
+		DiffColor: RGB{0, 60, 170},
+		SpecCoeff: 0.2,
+		SpecColor: RGB{255, 255, 255},
+		Phong:     10,
 	}
 
 	out := C.Render(
@@ -141,7 +132,9 @@ func main() {
 			// 	Color: RGB{125, 175, 175},
 			// 	Loc:   V3{-15, -2, -10},
 			// },
-		}, 5)
+		},
+		4, //Depth
+	)
 
 	pngFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/test.png")
 	if err != nil {

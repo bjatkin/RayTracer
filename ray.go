@@ -24,7 +24,7 @@ type Ray struct {
 	lenSet bool
 }
 
-func (r *Ray) String() string {
+func (r Ray) String() string {
 	return fmt.Sprintf("%s -> %s", r.Origin, r.Dest)
 }
 
@@ -160,14 +160,19 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 	if o.GetMat().TransCoeff > 0 && depth >= 0 {
 		I := Unit(r.Dir())
 		N := Unit(normal)
-		cos := math.Cos(Rad(math.Acos(DotV3(I, N))))
+		cos := DotV3(I, N)
+		if cos < 0 {
+			cos *= -1
+		} else {
+			N = MulV3(-1, N)
+		}
 		nit := o.GetMat().RefractCoeff
 
 		p1 := MulV3(nit, I)
 		p2 := math.Sqrt(1 + nit*nit*(cos*cos-1))
 		p3 := nit*cos - p2
 		tdir := AddV3(p1, MulV3(p3, N))
-		apex := AddV3(point, MulV3(0.00001, tdir))
+		apex := AddV3(point, MulV3(0.0001, tdir))
 		tRay := Ray{
 			Origin:       apex,
 			Dest:         AddV3(apex, tdir),

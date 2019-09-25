@@ -156,3 +156,8 @@ func NewMat(x, y int8, data []float64) *Mat {
 func Rad(deg float64) float64 {
 	return deg * (math.Pi / 180)
 }
+
+//Deg returns the radians as degrees
+func Deg(rad float64) float64 {
+	return rad * (180 / math.Pi)
+}
