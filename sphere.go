@@ -10,13 +10,32 @@ type Object interface {
 	Intersect(*Ray) (float64, V3, bool)
 	GetMat() Material
 	Normal(V3) V3
+	BoundBox() boundBox
 }
 
 //Sphere is a sphere that can be rendered
 type Sphere struct {
-	Loc V3
-	Rad float64
-	Mat Material
+	Loc         V3
+	Rad         float64
+	Mat         Material
+	boundingBox boundBox
+	setBBox     bool
+}
+
+func (s *Sphere) genBBox() {
+	min := V3{
+		x: s.Loc.x - s.Rad,
+		y: s.Loc.y - s.Rad,
+		z: s.Loc.z - s.Rad,
+	}
+
+	max := V3{
+		x: s.Loc.x + s.Rad,
+		y: s.Loc.y + s.Rad,
+		z: s.Loc.z + s.Rad,
+	}
+
+	s.boundingBox = boundBox{p1: min, p2: max}
 }
 
 func (s Sphere) GetMat() Material {
@@ -27,8 +46,20 @@ func (s Sphere) Normal(pt V3) V3 {
 	return Unit(SubV3(pt, s.Loc))
 }
 
+func (s Sphere) BoundBox() boundBox {
+	return s.boundingBox
+}
+
 //Intersect takes a ray and returns the nearist intersection
 func (s Sphere) Intersect(ray *Ray) (float64, V3, bool) {
+	//check if we intersect the bounding box
+	if !s.setBBox {
+		s.genBBox()
+	}
+
+	if !s.boundingBox.Intersect(ray) {
+		return 0, V3{}, false
+	}
 
 	d := SubV3(ray.Origin, s.Loc)
 

@@ -28,6 +28,17 @@ func (r Ray) String() string {
 	return fmt.Sprintf("%s -> %s", r.Origin, r.Dest)
 }
 
+//Jitter jitters a ray randomly with the given size
+func (r *Ray) Jitter(size float64) {
+	r.dirSet = false //We need to recaluculate the direction of the ray
+	jit := V3{
+		x: RandGaus() * size,
+		y: RandGaus() * size,
+		z: RandGaus() * size,
+	}
+	r.Dest = AddV3(r.Dest, jit)
+}
+
 //Child sends a child ray out
 func (r *Ray) Child(dest V3) {
 	children := append(*r.Children, Ray{Origin: r.Dest, Dest: dest})
@@ -96,31 +107,40 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 
 	for _, l := range *r.Lights {
 		dir := l.ToLight(point)
-		// cast a shadow ray to see if we need to calculate this light
-		org := AddV3(point, MulV3(0.00000001, dir))
-		sRay := Ray{
-			Origin:    org, //shift along dir so we don't collide with the same object
-			Dest:      AddV3(org, dir),
-			MaxLength: r.MaxLength,
-		}
-		shadow := false
-		for _, o := range *r.Objects {
-			dist, _, cross := o.Intersect(&sRay)
-			if cross {
-				test := Ray{
-					Origin: org,
-					Dest:   AddV3(org, Unit(sRay.Dir())),
-				}
-				test = test.Scale(dist)
-				if sRay.Length() > test.Length() {
-					shadow = true
-					break
+		// Ray count
+		sampleCount := l.SampleSize()
+		shadow := 0
+
+		for rCount := 0; rCount < sampleCount; rCount++ {
+			sdir := l.ToLight(point)
+			// cast a shadow ray to see if we need to calculate this light
+			org := AddV3(point, MulV3(0.00000001, sdir))
+			sRay := Ray{
+				Origin:    org, //shift along dir so we don't collide with the same object
+				Dest:      AddV3(org, sdir),
+				MaxLength: r.MaxLength,
+			}
+
+			for _, o := range *r.Objects {
+				dist, _, cross := o.Intersect(&sRay)
+				if cross {
+					test := Ray{
+						Origin: org,
+						Dest:   AddV3(org, Unit(sRay.Dir())),
+					}
+					test = test.Scale(dist)
+					if sRay.Length() > test.Length() {
+						shadow++
+						break
+					}
 				}
 			}
 		}
-		if shadow {
+		shadowFactor := float64(sampleCount-shadow) / float64(sampleCount)
+		if shadowFactor == 0 {
 			continue
 		}
+
 		diff := V3{}
 		diffDir := DotV3(Unit(normal), Unit(dir))
 		if diffDir > 0 {
@@ -133,29 +153,36 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 			spec = MulV3(math.Pow(specDir, mat.Phong), specCol)
 		}
 
-		color = AddV3(color, HadMulV3(l.GetColor().V3(), AddV3(diff, spec)))
+		color = AddV3(color, MulV3(shadowFactor, HadMulV3(l.GetColor().V3(), AddV3(diff, spec))))
 	}
 
 	depth--
-	// cast a reflection ray
+	// cast a group of reflection rays
 	reflectColor := V3{}
 	if o.GetMat().ReflectCoeff > 0 && depth >= 0 {
+		reflect := RayGroup{}
 		reflectV3 := Unit(ReflectV3(r.Dir(), o.Normal(point)))
 		apex := AddV3(point, MulV3(0.000000001, reflectV3))
-		reflect := Ray{
-			Origin:       apex,
-			Dest:         AddV3(apex, reflectV3),
-			MaxLength:    r.MaxLength,
-			Objects:      r.Objects,
-			Lights:       r.Lights,
-			BGColor:      r.BGColor,
-			AmbientLight: r.AmbientLight,
-			CameraOrg:    r.CameraOrg,
+
+		for i := 0; i < 5; i++ {
+			flect := Ray{
+				Origin:       apex,
+				Dest:         AddV3(apex, reflectV3),
+				MaxLength:    r.MaxLength,
+				Objects:      r.Objects,
+				Lights:       r.Lights,
+				BGColor:      r.BGColor,
+				AmbientLight: r.AmbientLight,
+				CameraOrg:    r.CameraOrg,
+			}
+			flect.Jitter(0.01)
+			reflect = append(reflect, &flect)
 		}
+
 		reflectColor = MulV3(o.GetMat().ReflectCoeff, reflect.Color(depth).V3())
 	}
 
-	// cast a transmission ray
+	// cast a group of transmission rays
 	transColor := V3{}
 	if o.GetMat().TransCoeff > 0 && depth >= 0 {
 		I := Unit(r.Dir())
@@ -173,18 +200,33 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 		p3 := nit*cos - p2
 		tdir := AddV3(p1, MulV3(p3, N))
 		apex := AddV3(point, MulV3(0.0001, tdir))
-		tRay := Ray{
-			Origin:       apex,
-			Dest:         AddV3(apex, tdir),
-			MaxLength:    r.MaxLength,
-			Objects:      r.Objects,
-			Lights:       r.Lights,
-			BGColor:      r.BGColor,
-			AmbientLight: r.AmbientLight,
-			CameraOrg:    r.CameraOrg,
+		tRay := RayGroup{}
+		for i := 0; i < 5; i++ {
+			tr := Ray{
+				Origin:       apex,
+				Dest:         AddV3(apex, tdir),
+				MaxLength:    r.MaxLength,
+				Objects:      r.Objects,
+				Lights:       r.Lights,
+				BGColor:      r.BGColor,
+				AmbientLight: r.AmbientLight,
+				CameraOrg:    r.CameraOrg,
+			}
+			tr.Jitter(0.01)
+			tRay = append(tRay, &tr)
 		}
 		transColor = MulV3(o.GetMat().TransCoeff, tRay.Color(depth).V3())
 	}
 
 	return AddV3(transColor, AddV3(reflectColor, color)).RGB()
+}
+
+type RayGroup []*Ray
+
+func (rg RayGroup) Color(depth int) RGB {
+	ret := V3{}
+	for _, r := range rg {
+		ret = AddV3(ret, MulV3(1/float64(len(rg)), r.Color(depth).V3()))
+	}
+	return ret.RGB()
 }

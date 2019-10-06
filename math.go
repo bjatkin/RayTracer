@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 )
 
 //V3 is a 4D vector
@@ -160,4 +161,32 @@ func Rad(deg float64) float64 {
 //Deg returns the radians as degrees
 func Deg(rad float64) float64 {
 	return rad * (180 / math.Pi)
+}
+
+//use this to make RandGaus more random
+var nextRand int64 = 0
+
+//RandGaus returns a random number between -1 to 1 with a gausian distribution
+func RandGaus() float64 {
+	return rand.Float64()*2 - 1
+	// x := float64(0.0)
+	// nSum := 20.0
+	// rand.Seed(time.Now().Unix() + nextRand)
+	// nextRand++
+	// for i := 0; i < int(nSum); i++ {
+	// 	x += rand.Float64()
+	// }
+
+	// x -= nSum / 2.0
+	// x /= math.Sqrt(nSum / 12.0)
+
+	// ret := x / 2.5
+	// if (ret) < -1 {
+	// 	return -1
+	// }
+
+	// if (ret) > 1 {
+	// 	return 1
+	// }
+	// return ret
 }

@@ -2,9 +2,42 @@ package main
 
 //Plane is a sphere that can be rendered
 type Plane struct {
-	Points  [3]V3
-	Mat     Material
-	Flipped bool
+	Points      [3]V3
+	Mat         Material
+	Flipped     bool
+	boundingBox boundBox
+	setBBox     bool
+}
+
+func (p *Plane) genBBox() {
+	dist := V3{0.001, 0.001, 0.001}
+	min := p.Points[0]
+	max := p.Points[0]
+	for _, p := range p.Points {
+		if p.x < min.x {
+			min.x = p.x
+		}
+		if p.x > max.x {
+			max.x = p.x
+		}
+		if p.z < min.z {
+			min.z = p.z
+		}
+		if p.z > max.z {
+			max.z = p.z
+		}
+		if p.y < min.y {
+			min.y = p.y
+		}
+		if p.y > max.y {
+			max.y = p.y
+		}
+	}
+
+	//Prevent zero width/depth/height errors
+	min = SubV3(min, dist)
+	max = AddV3(max, dist)
+	p.boundingBox = boundBox{p1: min, p2: max}
 }
 
 func (p Plane) GetMat() Material {
@@ -24,8 +57,21 @@ func (p Plane) Normal(pt V3) V3 {
 	return Unit(CrossV3(edge1, edge2))
 }
 
+func (p Plane) BoundBox() boundBox {
+	return p.boundingBox
+}
+
 //Intersect takes a ray and returns the nearist intersection
 func (p Plane) Intersect(ray *Ray) (float64, V3, bool) {
+	//check if we intersect the bounding box
+	if !p.setBBox {
+		p.genBBox()
+	}
+
+	if !p.boundingBox.Intersect(ray) {
+		return 0, V3{}, false
+	}
+
 	const eps = 0.0000001
 	rayDir := Unit(ray.Dir())
 	v0 := p.Points[0]

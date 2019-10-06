@@ -27,14 +27,13 @@ func main() {
 		ReflectCoeff: 0.6,
 	}
 	S2 := Material{
-		AmbCoeff:     0.0,
+		AmbCoeff:     0.6,
 		DiffCoeff:    0.2,
-		DiffColor:    RGB{255, 255, 255},
+		DiffColor:    RGB{252, 186, 3},
 		SpecCoeff:    0.8,
 		SpecColor:    RGB{255, 255, 255},
-		TransCoeff:   1,
 		Phong:        200,
-		RefractCoeff: 0.875,
+		ReflectCoeff: 0.05,
 	}
 	whiteWall := Material{
 		AmbCoeff:  0.1,
@@ -69,8 +68,8 @@ func main() {
 				Mat: S1,
 			},
 			&Sphere{
-				Loc: V3{0, 5, -7},
-				Rad: 3,
+				Loc: V3{0, 4, -7},
+				Rad: 4,
 				Mat: S2,
 			},
 			&Plane{
@@ -120,20 +119,21 @@ func main() {
 			// 	Dir:     V3{-1, -1, 0},
 			// 	MaxDist: 5000,
 			// },
+			// &PointLight{
+			// 	Color: RGB{220, 220, 255},
+			// 	Loc:   V3{-15, 0, -10},
+			// },
 			&PointLight{
-				Color: RGB{255, 255, 240},
-				Loc:   V3{-15, 0, -10},
+				Color: RGB{125, 175, 175},
+				Loc:   V3{-15, 1, -10},
 			},
-			// &PointLight{
-			// 	Color: RGB{125, 175, 175},
-			// 	Loc:   V3{-15, 2, -10},
-			// },
-			// &PointLight{
-			// 	Color: RGB{125, 175, 175},
-			// 	Loc:   V3{-15, -2, -10},
-			// },
+			&PointLight{
+				Color: RGB{125, 175, 175},
+				Loc:   V3{-15, -1, -10},
+			},
 		},
-		4, //Depth
+		10, //Depth
+		2,  //SubPixels
 	)
 
 	pngFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/test.png")
