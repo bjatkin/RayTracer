@@ -18,22 +18,22 @@ type Camera struct {
 }
 
 //Render renders the objects using the given camera
-func (c Camera) Render(objects *[]Object, lights *[]Light, depth, subPixels int) *Image {
+func (c Camera) Render(objects []split, lights *[]Light) *Image {
 	out := NewImage(c.Width, c.Height) //the output of the render
 
 	upVector, sideVector := c.stepVectors()
-	upVector = MulV3(1/float64(subPixels), upVector)
-	sideVector = MulV3(1/float64(subPixels), sideVector)
+	upVector = MulV3(1/float64(SUB_PIXELS), upVector)
+	sideVector = MulV3(1/float64(SUB_PIXELS), sideVector)
 
 	for x := -c.Width / 2; x < c.Width/2; x++ {
 		for y := -c.Height / 2; y < c.Height/2; y++ {
 			//create a new ray pointing at the viewport
 			rg := RayGroup{}
-			for sx := 0; sx < subPixels; sx++ {
-				for sy := 0; sy < subPixels; sy++ {
+			for sx := 0; sx < SUB_PIXELS; sx++ {
+				for sy := 0; sy < SUB_PIXELS; sy++ {
 					r := Ray{
 						Origin:       c.Fpoint,
-						Dest:         AddV3(AddV3(c.Lpoint, MulV3(float64(x*subPixels+sx), upVector)), MulV3(float64(y*subPixels+sy), sideVector)),
+						Dest:         AddV3(AddV3(c.Lpoint, MulV3(float64(x*SUB_PIXELS+sx), upVector)), MulV3(float64(y*SUB_PIXELS+sy), sideVector)),
 						MaxLength:    c.Clip,
 						BGColor:      c.BGColor,
 						AmbientLight: c.AmbientLight,
@@ -41,12 +41,12 @@ func (c Camera) Render(objects *[]Object, lights *[]Light, depth, subPixels int)
 						Objects:      objects,
 						Lights:       lights,
 					}
-					r.Jitter(sideVector.x * 2 / float64(subPixels))
+					r.Jitter(sideVector.x * 2 / float64(SUB_PIXELS))
 					rg = append(rg, &r)
 				}
 			}
 
-			out.SetPixel(x+c.Width/2, y+c.Height/2, rg.Color(depth))
+			out.SetPixel(x+c.Width/2, y+c.Height/2, rg.Color(DEPTH))
 		}
 	}
 

@@ -5,6 +5,12 @@ import (
 	"os"
 )
 
+const SUB_PIXELS = 1
+const DEPTH = 1
+const SHADOW_SAMPLES = 10
+const REFLECT_RAYS = 5
+const TRANS_RAYS = 5
+
 func main() {
 	C := Camera{
 		Width:        1080,
@@ -59,60 +65,60 @@ func main() {
 		SpecColor: RGB{255, 255, 255},
 		Phong:     10,
 	}
-
-	out := C.Render(
-		&[]Object{
-			&Sphere{
-				Loc: V3{-5, -5, -9},
-				Rad: 3,
-				Mat: S1,
-			},
-			&Sphere{
-				Loc: V3{0, 4, -7},
-				Rad: 4,
-				Mat: S2,
-			},
-			&Plane{
-				Points: [3]V3{V3{3, 10, -21}, V3{3, -10, -1}, V3{3, 10, -1}},
-				Mat:    whiteWall,
-			},
-			&Plane{
-				Points: [3]V3{V3{3, -10, -1}, V3{3, 10, -21}, V3{3, -10, -21}},
-				Mat:    whiteWall,
-			},
-			&Plane{
-				Points: [3]V3{V3{3, -10, -21}, V3{3, 10, -21}, V3{-17, 10, -21}},
-				Mat:    whiteWall,
-			},
-			&Plane{
-				Points: [3]V3{V3{-17, -10, -21}, V3{3, -10, -21}, V3{-17, 10, -21}},
-				Mat:    whiteWall,
-			},
-			&Plane{
-				Points: [3]V3{V3{3, -10, -1}, V3{3, -10, -21}, V3{-17, -10, -1}},
-				Mat:    blueWall,
-			},
-			&Plane{
-				Points: [3]V3{V3{-17, -10, -1}, V3{3, -10, -21}, V3{-17, -10, -21}},
-				Mat:    blueWall,
-			},
-			&Plane{
-				Points: [3]V3{V3{3, 10, -21}, V3{3, 10, -1}, V3{-17, 10, -1}},
-				Mat:    redWall,
-			},
-			&Plane{
-				Points: [3]V3{V3{3, 10, -21}, V3{-17, 10, -1}, V3{-17, 10, -21}},
-				Mat:    redWall,
-			},
-			&Plane{
-				Points: [3]V3{V3{-17, -10, -1}, V3{-17, 10, -21}, V3{-17, 10, -1}},
-				Mat:    whiteWall,
-			},
-			&Plane{
-				Points: [3]V3{V3{-17, 10, -21}, V3{-17, -10, -1}, V3{-17, -10, -21}},
-				Mat:    whiteWall,
-			},
+	objs := &[]Object{
+		&Sphere{
+			Loc: V3{-5, -5, -9},
+			Rad: 3,
+			Mat: S1,
 		},
+		&Sphere{
+			Loc: V3{0, 4, -7},
+			Rad: 4,
+			Mat: S2,
+		},
+		&Plane{
+			Points: [3]V3{V3{3, 10, -21}, V3{3, -10, -1}, V3{3, 10, -1}},
+			Mat:    whiteWall,
+		},
+		&Plane{
+			Points: [3]V3{V3{3, -10, -1}, V3{3, 10, -21}, V3{3, -10, -21}},
+			Mat:    whiteWall,
+		},
+		&Plane{
+			Points: [3]V3{V3{3, -10, -21}, V3{3, 10, -21}, V3{-17, 10, -21}},
+			Mat:    whiteWall,
+		},
+		&Plane{
+			Points: [3]V3{V3{-17, -10, -21}, V3{3, -10, -21}, V3{-17, 10, -21}},
+			Mat:    whiteWall,
+		},
+		&Plane{
+			Points: [3]V3{V3{3, -10, -1}, V3{3, -10, -21}, V3{-17, -10, -1}},
+			Mat:    blueWall,
+		},
+		&Plane{
+			Points: [3]V3{V3{-17, -10, -1}, V3{3, -10, -21}, V3{-17, -10, -21}},
+			Mat:    blueWall,
+		},
+		&Plane{
+			Points: [3]V3{V3{3, 10, -21}, V3{3, 10, -1}, V3{-17, 10, -1}},
+			Mat:    redWall,
+		},
+		&Plane{
+			Points: [3]V3{V3{3, 10, -21}, V3{-17, 10, -1}, V3{-17, 10, -21}},
+			Mat:    redWall,
+		},
+		&Plane{
+			Points: [3]V3{V3{-17, -10, -1}, V3{-17, 10, -21}, V3{-17, 10, -1}},
+			Mat:    whiteWall,
+		},
+		&Plane{
+			Points: [3]V3{V3{-17, 10, -21}, V3{-17, -10, -1}, V3{-17, -10, -21}},
+			Mat:    whiteWall,
+		},
+	}
+	out := C.Render(
+		GenerateSplit(BoundingBox(*objs), 2, 10),
 		&[]Light{
 			// &DirLight{
 			// 	Color:   RGB{255, 255, 255},
@@ -132,9 +138,9 @@ func main() {
 				Loc:   V3{-15, -1, -10},
 			},
 		},
-		10, //Depth
-		2,  //SubPixels
 	)
+	fmt.Printf("Overlap: %v\n", (boundBox{p1: V3{0, 0, 0}, p2: V3{1, 1, 1}}).Overlap(boundBox{p1: V3{0, 0, 0}, p2: V3{1.5, 1.5, 1.5}}))
+	fmt.Printf("Split Data Structure: \n%#v\n", GenerateSplit(BoundingBox(*objs), 1, 1))
 
 	pngFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/test.png")
 	if err != nil {

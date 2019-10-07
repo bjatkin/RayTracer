@@ -38,6 +38,7 @@ func (p *Plane) genBBox() {
 	min = SubV3(min, dist)
 	max = AddV3(max, dist)
 	p.boundingBox = boundBox{p1: min, p2: max}
+	p.setBBox = true
 }
 
 func (p Plane) GetMat() Material {
@@ -58,17 +59,16 @@ func (p Plane) Normal(pt V3) V3 {
 }
 
 func (p Plane) BoundBox() boundBox {
+	if !p.setBBox {
+		p.genBBox()
+	}
 	return p.boundingBox
 }
 
 //Intersect takes a ray and returns the nearist intersection
 func (p Plane) Intersect(ray *Ray) (float64, V3, bool) {
 	//check if we intersect the bounding box
-	if !p.setBBox {
-		p.genBBox()
-	}
-
-	if !p.boundingBox.Intersect(ray) {
+	if !p.BoundBox().Intersect(ray) {
 		return 0, V3{}, false
 	}
 

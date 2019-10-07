@@ -118,6 +118,34 @@ func ReflectV3(d, n V3) V3 {
 	return SubV3(MulV3(2*DotV3(d, n), n), d)
 }
 
+//MinV3 returns a v3 with all the min components of the two vectors
+func MinV3(a V3, b V3) V3 {
+	if a.x > b.x {
+		a.x = b.x
+	}
+	if a.y > b.y {
+		a.y = b.y
+	}
+	if a.z > b.z {
+		a.z = b.z
+	}
+	return a
+}
+
+//MaxV3 returns a v3 with all the max components of the two vectors
+func MaxV3(a V3, b V3) V3 {
+	if a.x < b.x {
+		a.x = b.x
+	}
+	if a.y < b.y {
+		a.y = b.y
+	}
+	if a.z < b.z {
+		a.z = b.z
+	}
+	return a
+}
+
 //V4 is a 4D vector
 type V4 struct {
 	x, y, z, w float64
@@ -168,25 +196,5 @@ var nextRand int64 = 0
 
 //RandGaus returns a random number between -1 to 1 with a gausian distribution
 func RandGaus() float64 {
-	return rand.Float64()*2 - 1
-	// x := float64(0.0)
-	// nSum := 20.0
-	// rand.Seed(time.Now().Unix() + nextRand)
-	// nextRand++
-	// for i := 0; i < int(nSum); i++ {
-	// 	x += rand.Float64()
-	// }
-
-	// x -= nSum / 2.0
-	// x /= math.Sqrt(nSum / 12.0)
-
-	// ret := x / 2.5
-	// if (ret) < -1 {
-	// 	return -1
-	// }
-
-	// if (ret) > 1 {
-	// 	return 1
-	// }
-	// return ret
+	return rand.NormFloat64() / math.MaxFloat64
 }

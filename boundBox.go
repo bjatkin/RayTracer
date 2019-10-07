@@ -5,9 +5,9 @@ type boundBox struct {
 }
 
 func (bb boundBox) Overlap(ob boundBox) bool {
-	return bb.p1.x < ob.p2.x && ob.p1.x < bb.p2.x &&
-		bb.p1.y < ob.p2.y && ob.p1.y < bb.p2.y &&
-		bb.p1.z < ob.p2.z && ob.p1.z < bb.p2.z
+	return bb.p1.x <= ob.p2.x && ob.p1.x <= bb.p2.x &&
+		bb.p1.y <= ob.p2.y && ob.p1.y <= bb.p2.y &&
+		bb.p1.z <= ob.p2.z && ob.p1.z <= bb.p2.z
 }
 
 func (bb boundBox) Intersect(r *Ray) bool {

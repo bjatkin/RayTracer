@@ -10,7 +10,7 @@ type Ray struct {
 	Origin       V3
 	Dest         V3
 	Children     *[]Ray
-	Objects      *[]Object
+	Objects      []split
 	Lights       *[]Light
 	MaxLength    float64
 	BGColor      RGB
@@ -68,9 +68,11 @@ func (r *Ray) Color(depth int) RGB {
 	//Find the closest ray collision
 	hDist := r.MaxLength
 	color := r.BGColor
-	hO := (*r.Objects)[0]
+	itter := splitItterable(r.Objects, r)
+	var hO Object
 	hPoint := V3{}
-	for _, o := range *r.Objects {
+	for itter.Next() { //_, o := range *r.Objects {
+		o := itter.Obj()
 		dist, hit, success := o.Intersect(r)
 		if success && dist < hDist {
 			hDist = dist
@@ -121,7 +123,9 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 				MaxLength: r.MaxLength,
 			}
 
-			for _, o := range *r.Objects {
+			itter := splitItterable(r.Objects, r)
+			for itter.Next() { //_, o := range *r.Objects {
+				o := itter.Obj()
 				dist, _, cross := o.Intersect(&sRay)
 				if cross {
 					test := Ray{
@@ -164,7 +168,7 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 		reflectV3 := Unit(ReflectV3(r.Dir(), o.Normal(point)))
 		apex := AddV3(point, MulV3(0.000000001, reflectV3))
 
-		for i := 0; i < 5; i++ {
+		for i := 0; i < REFLECT_RAYS; i++ {
 			flect := Ray{
 				Origin:       apex,
 				Dest:         AddV3(apex, reflectV3),

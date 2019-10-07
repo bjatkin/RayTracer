@@ -36,6 +36,7 @@ func (s *Sphere) genBBox() {
 	}
 
 	s.boundingBox = boundBox{p1: min, p2: max}
+	s.setBBox = true
 }
 
 func (s Sphere) GetMat() Material {
@@ -47,17 +48,16 @@ func (s Sphere) Normal(pt V3) V3 {
 }
 
 func (s Sphere) BoundBox() boundBox {
+	if !s.setBBox {
+		s.genBBox()
+	}
 	return s.boundingBox
 }
 
 //Intersect takes a ray and returns the nearist intersection
 func (s Sphere) Intersect(ray *Ray) (float64, V3, bool) {
 	//check if we intersect the bounding box
-	if !s.setBBox {
-		s.genBBox()
-	}
-
-	if !s.boundingBox.Intersect(ray) {
+	if !s.BoundBox().Intersect(ray) {
 		return 0, V3{}, false
 	}
 

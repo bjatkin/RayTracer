@@ -80,7 +80,7 @@ func (l *AreaLight) ToLight(from V3) V3 {
 //SampleSize returns the number of samples needed to
 // have an accurate representation of the light source
 func (l *AreaLight) SampleSize() int {
-	return 10
+	return SHADOW_SAMPLES
 }
 
 //GetColor returns the color of the light
