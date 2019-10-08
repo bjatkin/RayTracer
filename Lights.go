@@ -1,6 +1,9 @@
 package main
 
-import "math/rand"
+import (
+	"math"
+	"math/rand"
+)
 
 //Light is a light in the scean
 type Light interface {
@@ -66,15 +69,14 @@ func (l *AreaLight) ToLight(from V3) V3 {
 	p1 := l.Area.Points[0]
 	p2 := l.Area.Points[1]
 	p3 := l.Area.Points[2]
-	v1 := SubV3(p2, p1)
-	v2 := SubV3(p3, p1)
 
-	a := rand.Float64()
-	b := rand.Float64() * (1 - a)
-	if rand.Float64() > 0.5 {
-		return AddV3(MulV3(a, v1), MulV3(b, v2))
-	}
-	return AddV3(MulV3(a, v2), MulV3(b, v1))
+	r1 := rand.Float64()
+	r2 := rand.Float64()
+	A := MulV3((1 - math.Sqrt(r1)), p1)
+	B := MulV3(math.Sqrt(r1)*(1-r2), p2)
+	C := MulV3(r2*math.Sqrt(r1), p3)
+	loc := AddV3(AddV3(A, B), C)
+	return SubV3(loc, from)
 }
 
 //SampleSize returns the number of samples needed to

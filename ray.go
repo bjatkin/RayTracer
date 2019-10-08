@@ -124,7 +124,7 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 				MaxLength: r.MaxLength,
 			}
 
-			itter := splitItterable(r.Objects, r)
+			itter := splitItterable(r.Objects, &sRay)
 			for itter.Next() { //_, o := range *r.Objects {
 				o := itter.Obj()
 				dist, _, cross := o.Intersect(&sRay)
