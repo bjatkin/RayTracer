@@ -17,7 +17,7 @@ func splitItterable(splits []split, r *Ray) splitItter {
 	return ret
 }
 
-func (si splitItter) Next() bool {
+func (si *splitItter) Next() bool {
 	if len(si.splits) == 0 {
 		return false
 	}
@@ -32,7 +32,7 @@ func (si splitItter) Next() bool {
 	return true
 }
 
-func (si splitItter) Obj() Object {
+func (si *splitItter) Obj() Object {
 	return si.splits[si.sIndex].objects[si.oIndex]
 }
 
@@ -69,30 +69,26 @@ func SplitBox(b boundBox) (boundBox, boundBox) {
 	magX := max.x - min.x
 	magY := max.y - min.y
 	magZ := max.z - max.z
+	diff := SubV3(max, min)
 
 	//Split the box along it's greatest axis
-	mid1 := min
-	mid2 := max
 	if magX > magY && magX > magZ {
-		mid1.x += magX / 2
-		mid2.x -= magX / 2
+		diff.x *= 0.5
 	}
 	if magY > magX && magY > magZ {
-		mid1.y += magY / 2
-		mid2.y -= magY / 2
+		diff.y *= 0.5
 	}
 	if magZ > magY && magZ > magX {
-		mid1.z += magZ / 2
-		mid2.z -= magZ / 2
+		diff.z *= 0.5
 	}
 
 	return boundBox{
-			p1: min,
-			p2: mid1,
+			p1: SubV3(max, diff),
+			p2: max,
 		},
 		boundBox{
-			p1: mid2,
-			p2: max,
+			p1: min,
+			p2: AddV3(min, diff),
 		}
 }
 

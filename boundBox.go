@@ -1,7 +1,13 @@
 package main
 
+import "fmt"
+
 type boundBox struct {
 	p1, p2 V3
+}
+
+func (bb boundBox) String() string {
+	return fmt.Sprintf("P1: %f, %f, %f / P2: %f, %f, %f", bb.p1.x, bb.p1.y, bb.p1.z, bb.p2.x, bb.p2.y, bb.p2.z)
 }
 
 func (bb boundBox) Overlap(ob boundBox) bool {

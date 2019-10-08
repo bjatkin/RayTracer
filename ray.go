@@ -16,6 +16,7 @@ type Ray struct {
 	BGColor      RGB
 	AmbientLight RGB
 	CameraOrg    V3
+	TestObj      *[]Object
 
 	//Do some caching so we don't recalculate the same thing over and over
 	dir    V3
@@ -71,7 +72,7 @@ func (r *Ray) Color(depth int) RGB {
 	itter := splitItterable(r.Objects, r)
 	var hO Object
 	hPoint := V3{}
-	for itter.Next() { //_, o := range *r.Objects {
+	for itter.Next() {
 		o := itter.Obj()
 		dist, hit, success := o.Intersect(r)
 		if success && dist < hDist {
@@ -178,6 +179,7 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 				BGColor:      r.BGColor,
 				AmbientLight: r.AmbientLight,
 				CameraOrg:    r.CameraOrg,
+				TestObj:      r.TestObj,
 			}
 			flect.Jitter(0.01)
 			reflect = append(reflect, &flect)
@@ -205,12 +207,13 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 		tdir := AddV3(p1, MulV3(p3, N))
 		apex := AddV3(point, MulV3(0.0001, tdir))
 		tRay := RayGroup{}
-		for i := 0; i < 5; i++ {
+		for i := 0; i < TRANS_RAYS; i++ {
 			tr := Ray{
 				Origin:       apex,
 				Dest:         AddV3(apex, tdir),
 				MaxLength:    r.MaxLength,
 				Objects:      r.Objects,
+				TestObj:      r.TestObj,
 				Lights:       r.Lights,
 				BGColor:      r.BGColor,
 				AmbientLight: r.AmbientLight,

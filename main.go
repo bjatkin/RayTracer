@@ -6,10 +6,10 @@ import (
 )
 
 const SUB_PIXELS = 1
-const DEPTH = 1
+const DEPTH = 3
 const SHADOW_SAMPLES = 10
 const REFLECT_RAYS = 5
-const TRANS_RAYS = 5
+const TRANS_RAYS = 1
 
 func main() {
 	C := Camera{
@@ -33,13 +33,22 @@ func main() {
 		ReflectCoeff: 0.6,
 	}
 	S2 := Material{
-		AmbCoeff:     0.6,
+		AmbCoeff:     0.0,
 		DiffCoeff:    0.2,
-		DiffColor:    RGB{252, 186, 3},
+		DiffColor:    RGB{255, 255, 255},
 		SpecCoeff:    0.8,
 		SpecColor:    RGB{255, 255, 255},
+		TransCoeff:   1,
 		Phong:        200,
-		ReflectCoeff: 0.05,
+		RefractCoeff: 0.875,
+		// AmbCoeff:     0.2,
+		// DiffCoeff:    0.2,
+		// DiffColor:    RGB{250, 250, 250},
+		// SpecCoeff:    0.8,
+		// SpecColor:    RGB{255, 255, 255},
+		// Phong:        200,
+		// TransCoeff:   0.9,
+		// RefractCoeff: 1,
 	}
 	whiteWall := Material{
 		AmbCoeff:  0.1,
@@ -116,18 +125,29 @@ func main() {
 			Points: [3]V3{V3{-17, 10, -21}, V3{-17, -10, -1}, V3{-17, -10, -21}},
 			Mat:    whiteWall,
 		},
+		// &Plane{
+		// 	Points: [3]V3{V3{-16.25, 3, -15}, V3{-16.25, -3, -15}, V3{-16.25, 3, -13}},
+		// 	Mat:    blueWall,
+		// },
+		// &Plane{
+		// 	Points: [3]V3{V3{-16.25, 3, -13}, V3{-16.25, -3, -13}, V3{-16.25, -3, -15}},
+		// 	Mat:    blueWall,
+		// },
 	}
+
+	medSplit := GenerateSplit(BoundingBox(*objs), 2, 5)
 	out := C.Render(
-		GenerateSplit(BoundingBox(*objs), 2, 10),
+		medSplit,
 		&[]Light{
-			// &DirLight{
-			// 	Color:   RGB{255, 255, 255},
-			// 	Dir:     V3{-1, -1, 0},
-			// 	MaxDist: 5000,
+			// &AreaLight{
+			// 	Color: RGB{255, 255, 255},
+			// 	// Color: RGB{125, 175, 175},
+			// 	Area: Plane{Points: [3]V3{V3{-16, 3, -13}, V3{-16, -3, -13}, V3{-16, -3, -15}}},
 			// },
-			// &PointLight{
-			// 	Color: RGB{220, 220, 255},
-			// 	Loc:   V3{-15, 0, -10},
+			// &AreaLight{
+			// 	Color: RGB{255, 255, 255},
+			// 	// Color: RGB{125, 175, 175},
+			// 	Area: Plane{Points: [3]V3{V3{-16, 3, -15}, V3{-16, -3, -15}, V3{-16, 3, -13}}},
 			// },
 			&PointLight{
 				Color: RGB{125, 175, 175},
@@ -138,9 +158,19 @@ func main() {
 				Loc:   V3{-15, -1, -10},
 			},
 		},
+		objs,
 	)
-	fmt.Printf("Overlap: %v\n", (boundBox{p1: V3{0, 0, 0}, p2: V3{1, 1, 1}}).Overlap(boundBox{p1: V3{0, 0, 0}, p2: V3{1.5, 1.5, 1.5}}))
-	fmt.Printf("Split Data Structure: \n%#v\n", GenerateSplit(BoundingBox(*objs), 1, 1))
+	// fmt.Printf("Overlap: %v\n", (boundBox{p1: V3{0, 0, 0}, p2: V3{1, 1, 1}}).Overlap(boundBox{p1: V3{0, 0, 0}, p2: V3{1.5, 1.5, 1.5}}))
+	// fmt.Printf("Intersect: %v\n",
+	// 	(boundBox{p1: V3{-2, -2, -2}, p2: V3{2, 2, 2}}).Intersect(
+	// 		&Ray{Origin: V3{0, 0, 0}, Dest: V3{0, 1, 0}}))
+	// fmt.Printf("\n\nOrigin: \n%v\n\n", BoundingBox(*objs))
+	// b := BoundingBox(*objs)
+	// for i, o := range *objs {
+	// 	if b.bound.Overlap(o.BoundBox()) {
+	// 		fmt.Printf("i: %d\n", i)
+	// 	}
+	// }
 
 	pngFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/test.png")
 	if err != nil {

@@ -18,7 +18,7 @@ type Camera struct {
 }
 
 //Render renders the objects using the given camera
-func (c Camera) Render(objects []split, lights *[]Light) *Image {
+func (c Camera) Render(objects []split, lights *[]Light, test *[]Object) *Image {
 	out := NewImage(c.Width, c.Height) //the output of the render
 
 	upVector, sideVector := c.stepVectors()
@@ -39,6 +39,7 @@ func (c Camera) Render(objects []split, lights *[]Light) *Image {
 						AmbientLight: c.AmbientLight,
 						CameraOrg:    c.Fpoint,
 						Objects:      objects,
+						TestObj:      test,
 						Lights:       lights,
 					}
 					r.Jitter(sideVector.x * 2 / float64(SUB_PIXELS))
