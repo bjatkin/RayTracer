@@ -231,9 +231,21 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 type RayGroup []*Ray
 
 func (rg RayGroup) Color(depth int) RGB {
-	ret := V3{}
+	colors := make(chan V3, len(rg))
 	for _, r := range rg {
-		ret = AddV3(ret, MulV3(1/float64(len(rg)), r.Color(depth).V3()))
+		// ret = AddV3(ret, MulV3(1/float64(len(rg)), r.Color(depth).V3()))
+		go func() {
+			colors <- MulV3(1/float64(len(rg)), r.Color(depth).V3())
+		}()
 	}
+
+	ret := V3{}
+	for i := 0; i < len(rg); i++ {
+		select {
+		case c := <-colors:
+			ret = AddV3(ret, c)
+		}
+	}
+
 	return ret.RGB()
 }

@@ -24,6 +24,11 @@ func (c Camera) Render(objects []split, lights *[]Light, test *[]Object) *Image 
 	upVector, sideVector := c.stepVectors()
 	upVector = MulV3(1/float64(SUB_PIXELS), upVector)
 	sideVector = MulV3(1/float64(SUB_PIXELS), sideVector)
+	progress := progressBar{
+		total: c.Width * c.Height,
+		len:   50,
+	}
+	progress.Draw()
 
 	for x := -c.Width / 2; x < c.Width/2; x++ {
 		for y := -c.Height / 2; y < c.Height/2; y++ {
@@ -46,6 +51,9 @@ func (c Camera) Render(objects []split, lights *[]Light, test *[]Object) *Image 
 					rg = append(rg, &r)
 				}
 			}
+
+			progress.Update()
+			progress.Draw()
 
 			out.SetPixel(x+c.Width/2, y+c.Height/2, rg.Color(DEPTH))
 		}

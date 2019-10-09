@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type splitItter struct {
 	splits []split
 	sIndex int
@@ -33,7 +35,15 @@ func (si *splitItter) Next() bool {
 }
 
 func (si *splitItter) Obj() Object {
-	return si.splits[si.sIndex].objects[si.oIndex]
+	success := false
+	ret := si.splits[si.sIndex].objects[si.oIndex]
+	defer func() {
+		if !success {
+			fmt.Printf("\nsIndex %d, oIndex %d\n", si.sIndex, si.oIndex)
+		}
+	}()
+	success = true
+	return ret
 }
 
 type split struct {
