@@ -1,6 +1,6 @@
 package main
 
-import "fmt"
+type medianSplit []split
 
 type splitItter struct {
 	splits []split
@@ -31,18 +31,14 @@ func (si *splitItter) Next() bool {
 	if len(si.splits) <= si.sIndex {
 		return false
 	}
+	if len(si.splits[si.sIndex].objects) == 0 {
+		return false
+	}
 	return true
 }
 
 func (si *splitItter) Obj() Object {
-	success := false
 	ret := si.splits[si.sIndex].objects[si.oIndex]
-	defer func() {
-		if !success {
-			fmt.Printf("\nsIndex %d, oIndex %d\n", si.sIndex, si.oIndex)
-		}
-	}()
-	success = true
 	return ret
 }
 
@@ -122,25 +118,32 @@ func GenerateSplit(start split, objCount, splitCount int) []split {
 	ret := []split{}
 	if len(split1.objects) < objCount || splitCount == 0 {
 		//Add this region to the list of regions
-		ret = append(ret, split1)
+		ret = appendSplit(ret, split1)
 	} else {
 		//Recurse down a level
 		splits := GenerateSplit(split1, objCount, splitCount-1)
 		for _, s := range splits {
-			ret = append(ret, s)
+			ret = appendSplit(ret, s)
 		}
 	}
 
 	if len(split2.objects) < objCount || splitCount == 0 {
 		//Add this region to the list of regions
-		ret = append(ret, split2)
+		ret = appendSplit(ret, split2)
 	} else {
 		//Recures down a level
 		splits := GenerateSplit(split2, objCount, splitCount-1)
 		for _, s := range splits {
-			ret = append(ret, s)
+			ret = appendSplit(ret, s)
 		}
 	}
 
 	return ret //The full data structure
+}
+
+func appendSplit(a []split, b split) []split {
+	if len(b.objects) > 0 {
+		a = append(a, b)
+	}
+	return a
 }

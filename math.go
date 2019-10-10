@@ -146,39 +146,18 @@ func MaxV3(a V3, b V3) V3 {
 	return a
 }
 
-//V4 is a 4D vector
-type V4 struct {
-	x, y, z, w float64
-}
-
-//AddV4 adds 2 V4's
-func AddV4(v1, v2 V4) V4 {
-	return V4{
-		x: v1.x + v2.x,
-		y: v1.y + v2.y,
-		z: v1.z + v2.z,
-		w: v1.w + v2.w,
+//RandV3 returns a random V3 with each component in the range -size,+size
+func RandV3(size float64) V3 {
+	return V3{
+		x: RandGaus() * size,
+		y: RandGaus() * size,
+		z: RandGaus() * size,
 	}
 }
 
-//Mat is a general matrix
-type Mat struct {
-	x, y int8
-	data []float64
-}
-
-//At returns the value at x,y in the matrix
-func (m *Mat) At(x, y int8) float64 {
-	return m.data[x*m.x+m.y]
-}
-
-//NewMat returns a new matrix with the given dimentions and data
-func NewMat(x, y int8, data []float64) *Mat {
-	return &Mat{
-		x:    x,
-		y:    y,
-		data: data,
-	}
+//JitterV3 randomly jitters a V3 by the size given
+func JitterV3(start V3, size float64) V3 {
+	return AddV3(start, RandV3(size))
 }
 
 //Rad returns the degrees as radians
@@ -190,9 +169,6 @@ func Rad(deg float64) float64 {
 func Deg(rad float64) float64 {
 	return rad * (180 / math.Pi)
 }
-
-//use this to make RandGaus more random
-var nextRand int64 = 0
 
 //RandGaus returns a random number between -1 to 1 with a gausian distribution
 func RandGaus() float64 {

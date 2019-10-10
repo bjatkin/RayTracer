@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"image/png"
 	"math"
+	"os"
 )
 
 //Camera is a camera that can be added to the scene
@@ -26,12 +29,31 @@ func (c Camera) Render(objects []split, lights *[]Light, test *[]Object) *Image 
 	sideVector = MulV3(1/float64(SUB_PIXELS), sideVector)
 	progress := progressBar{
 		total: c.Width * c.Height,
-		len:   50,
+		len:   70,
 	}
 	progress.Draw()
 
+	checkpointFile, err := os.Open("/Users/brandon/go/src/Projects/School/RayTracer/checkpoints/checkpoint_-1_359.png")
+	if err != nil {
+		fmt.Printf("THE WAS and error Reading the checkpoint file\n")
+		return out
+	}
+	chk, err := png.Decode(checkpointFile)
+	if err != nil {
+		fmt.Printf("THE WAS and error Reading the checkpoint file\n")
+		return out
+	}
+
 	for x := -c.Width / 2; x < c.Width/2; x++ {
 		for y := -c.Height / 2; y < c.Height/2; y++ {
+			//Check to see if this point already exsists
+			if x < -3 {
+				progress.Update()
+				progress.Draw()
+				r, g, b, _ := chk.At(x+c.Width/2, y+c.Height/2).RGBA()
+				out.SetPixel(x+c.Width/2, y+c.Height/2, RGB{uint8(r), uint8(g), uint8(b)})
+				continue
+			}
 			//create a new ray pointing at the viewport
 			rg := RayGroup{}
 			for sx := 0; sx < SUB_PIXELS; sx++ {
@@ -54,6 +76,17 @@ func (c Camera) Render(objects []split, lights *[]Light, test *[]Object) *Image 
 
 			progress.Update()
 			progress.Draw()
+			if progress.current%(c.Width*10) == 0 {
+				//Save a checkpoint file
+				pngFile, err := os.Create(
+					fmt.Sprintf("/Users/brandon/go/src/Projects/School/RayTracer/checkpoints/checkpoint_%d_%d.png", x, y),
+				)
+				if err != nil {
+					fmt.Printf("There was an error creating a checkpoint file: %s", err.Error())
+				} else {
+					out.WritePNG(pngFile)
+				}
+			}
 
 			out.SetPixel(x+c.Width/2, y+c.Height/2, rg.Color(DEPTH))
 		}
