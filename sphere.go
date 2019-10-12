@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"math"
 )
 
 //Object is anything that can be intersected and drawn by a ray
 type Object interface {
 	Intersect(*Ray) (float64, V3, bool)
+	IntersectPath(*path) (float64, bool)
 	GetMat() Material
 	Normal(V3) V3
 	BoundBox() boundBox
@@ -80,10 +80,6 @@ func (s Sphere) Intersect(ray *Ray) (float64, V3, bool) {
 			Origin: ray.Origin,
 			Dest:   AddV3(ray.Origin, rayDir),
 		}
-		if (SubV3(ret.Scale(i2).Dest, s.Loc)).Magnitude()-s.Rad > 0.0001 {
-			fmt.Printf("ERROR Dist: %f, Rad: %f!\n", DotV3((SubV3(ret.Scale(i2).Dest, s.Loc)), SubV3(ret.Scale(i2).Dest, s.Loc)), s.Rad)
-		}
-
 		return i2, ret.Scale(i2).Dest, true
 
 	}
@@ -94,11 +90,40 @@ func (s Sphere) Intersect(ray *Ray) (float64, V3, bool) {
 			Origin: ray.Origin,
 			Dest:   AddV3(ray.Origin, rayDir),
 		}
-		if (SubV3(ret.Scale(i2).Dest, s.Loc)).Magnitude()-s.Rad > 0.0001 {
-			fmt.Printf("ERROR Dist: %f, Rad: %f!\n", DotV3((SubV3(ret.Scale(i2).Dest, s.Loc)), SubV3(ret.Scale(i2).Dest, s.Loc)), s.Rad)
-		}
 		return i1, ret.Scale(i1).Dest, true
 	}
 
 	return 0, V3{}, false
+}
+
+func (s Sphere) IntersectPath(path *path) (float64, bool) {
+	//check if we intersect the bounding box
+	if !s.BoundBox().IntersectPath(path) {
+		return 0, false
+	}
+
+	d := SubV3(path.Origin, s.Loc)
+
+	rayDir := Unit(path.Dir())
+	b := 2 * DotV3(rayDir, d)
+	c := DotV3(d, d) - (s.Rad * s.Rad)
+
+	disc := b*b - 4*c
+
+	if disc < 0 {
+		return 0, false
+	}
+
+	disc = math.Sqrt(disc)
+	i2 := (-b - disc) / 2
+	if i2 > 0 {
+		return i2, true
+	}
+
+	i1 := (-b + disc) / 2
+	if i1 > 0 {
+		return i1, true
+	}
+
+	return 0, false
 }

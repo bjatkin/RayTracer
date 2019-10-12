@@ -10,12 +10,18 @@ type Light interface {
 	ToLight(V3) V3
 	GetColor() RGB
 	SampleSize() int
+	Intersect(*path) (float64, bool)
 }
 
 //PointLight is a point light object
 type PointLight struct {
 	Loc   V3
 	Color RGB
+}
+
+//TODO finish this as a sphere
+func (l *PointLight) Intersect(p *path) (float64, bool) {
+	return 0, false
 }
 
 //ToLight is the non normalized vector from the point to the light
@@ -41,6 +47,11 @@ type DirLight struct {
 	MaxDist float64
 }
 
+//TODO finish this with dot products stuff
+func (l *DirLight) Intersect(p *path) (float64, bool) {
+	return 0, false
+}
+
 //ToLight is the vector direction of the light
 func (l *DirLight) ToLight(from V3) V3 {
 	return l.Dir
@@ -62,6 +73,10 @@ func (l *DirLight) GetColor() RGB {
 type AreaLight struct {
 	Area  Plane
 	Color RGB
+}
+
+func (l *AreaLight) Intersect(p *path) (float64, bool) {
+	return l.Area.IntersectPath(p)
 }
 
 //ToLight is a random vector direction to a point on the area light

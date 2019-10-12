@@ -64,3 +64,52 @@ func (bb boundBox) Intersect(r *Ray) bool {
 
 	return true
 }
+
+func (bb boundBox) IntersectPath(p *path) bool {
+	tmin := (bb.p1.x - p.Origin.x) / p.Dir().x
+	tmax := (bb.p2.x - p.Origin.x) / p.Dir().x
+
+	if tmin > tmax {
+		tmin, tmax = tmax, tmin //Swap
+	}
+
+	tymin := (bb.p1.y - p.Origin.y) / p.Dir().y
+	tymax := (bb.p2.y - p.Origin.y) / p.Dir().y
+
+	if tymin > tymax {
+		tymin, tymax = tymax, tymin //Swap
+	}
+
+	if (tmin > tymax) || (tymin > tmax) {
+		return false
+	}
+
+	if tymin > tmin {
+		tmin = tymin
+	}
+
+	if tymax < tmax {
+		tmax = tymax
+	}
+
+	tzmin := (bb.p1.z - p.Origin.z) / p.Dir().z
+	tzmax := (bb.p2.z - p.Origin.z) / p.Dir().z
+
+	if tzmin > tzmax {
+		tzmin, tzmax = tzmax, tzmin
+	}
+
+	if (tmin > tzmax) || (tzmin > tmax) {
+		return false
+	}
+
+	if tzmin > tmin {
+		tmin = tzmin
+	}
+
+	if tzmax < tmax {
+		tmax = tzmax
+	}
+
+	return true
+}

@@ -233,10 +233,9 @@ type RayGroup []*Ray
 func (rg RayGroup) Color(depth int) RGB {
 	colors := make(chan V3, len(rg))
 	for _, r := range rg {
-		// ret = AddV3(ret, MulV3(1/float64(len(rg)), r.Color(depth).V3()))
-		go func() {
+		go func(r *Ray) {
 			colors <- MulV3(1/float64(len(rg)), r.Color(depth).V3())
-		}()
+		}(r)
 	}
 
 	ret := V3{}

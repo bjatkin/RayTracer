@@ -41,9 +41,9 @@ func (v V3) RGB() RGB {
 		v.z = 1
 	}
 	return RGB{
-		R: uint8(v.x * 255),
-		G: uint8(v.y * 255),
-		B: uint8(v.z * 255),
+		R: v.x * 255,
+		G: v.y * 255,
+		B: v.z * 255,
 	}
 }
 
@@ -156,7 +156,7 @@ func RandV3(size float64) V3 {
 }
 
 //JitterV3 randomly jitters a V3 by the size given
-func JitterV3(start V3, size float64) V3 {
+func JitterV3(size float64, start V3) V3 {
 	return AddV3(start, RandV3(size))
 }
 

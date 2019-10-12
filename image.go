@@ -15,15 +15,17 @@ type Image struct {
 	width  int
 	height int
 	pixels []RGB
+	name   string
 }
 
 //NewImage returns a new image object
-func NewImage(width, height int) *Image {
+func NewImage(width, height int, name string) *Image {
 	px := make([]RGB, width*height)
 	return &Image{
 		width:  width,
 		height: height,
 		pixels: px,
+		name:   name,
 	}
 }
 
@@ -49,10 +51,11 @@ func (p *Image) WritePNG(dest io.Writer) {
 		for x := 0; x < p.width; x++ {
 			pxl := p.GetPixel(x, y)
 
+			pxl.Clamp() //prevent wierd blowout
 			out.Set(x, y, color.NRGBA{
-				R: pxl.R, //uint8((x + y) & 255),
-				G: pxl.G, //uint8((x + y) << 1 & 255),
-				B: pxl.B, //uint8((x + y) << 2 & 255),
+				R: uint8(pxl.R),
+				G: uint8(pxl.G),
+				B: uint8(pxl.B),
 				A: 255,
 			})
 		}
@@ -63,15 +66,66 @@ func (p *Image) WritePNG(dest io.Writer) {
 
 //RGB is an rgb color with rgb values between 0 and 255
 type RGB struct {
-	R uint8
-	G uint8
-	B uint8
+	R float64
+	G float64
+	B float64
 }
+
+var White = RGB{R: 255, G: 255, B: 255}
+var Black = RGB{R: 0, G: 0, B: 0}
 
 func (rgb RGB) String() string {
 	return strconv.FormatInt(int64(rgb.R), 10) + " " +
 		strconv.FormatInt(int64(rgb.G), 10) + " " +
 		strconv.FormatInt(int64(rgb.B), 10)
+}
+
+func AddRGB(a, b RGB) RGB {
+	ret := RGB{}
+	ret.R = a.R + b.R
+	ret.G = a.G + b.G
+	ret.B = a.B + b.B
+	ret.Clamp()
+	return ret
+}
+
+func MulRGB(scale float64, rgb RGB) RGB {
+	ret := RGB{}
+	ret.R = rgb.R * scale
+	ret.G = rgb.G * scale
+	ret.B = rgb.B * scale
+	ret.Clamp()
+	return ret
+}
+
+func MixRGB(a, b RGB) RGB {
+	ret := RGB{}
+	ret.R = (a.R / 255.0) * (b.R / 255.0) * 255.0
+	ret.G = (a.G / 255.0) * (b.G / 255.0) * 255.0
+	ret.B = (a.B / 255.0) * (b.B / 255.0) * 255.0
+	ret.Clamp()
+	return ret
+}
+
+func (rgb *RGB) Clamp() {
+	if rgb.R > 255 {
+		rgb.R = 255
+	}
+	if rgb.R < 0 {
+		rgb.R = 0
+	}
+	if rgb.G > 255 {
+		rgb.G = 255
+	}
+	if rgb.G < 0 {
+		rgb.G = 0
+	}
+	if rgb.B > 255 {
+		rgb.B = 255
+	}
+	if rgb.B < 0 {
+		rgb.B = 0
+	}
 }
 
 //V3 converts an RGB to a V3

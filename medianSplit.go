@@ -2,6 +2,16 @@ package main
 
 type medianSplit []split
 
+func (split medianSplit) itter(p *path) splitItter {
+	ret := splitItter{oIndex: -1}
+	for _, s := range split {
+		if s.bound.IntersectPath(p) {
+			ret.splits = append(ret.splits, s)
+		}
+	}
+	return ret
+}
+
 type splitItter struct {
 	splits []split
 	sIndex int

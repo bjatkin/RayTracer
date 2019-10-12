@@ -110,3 +110,42 @@ func (p Plane) Intersect(ray *Ray) (float64, V3, bool) {
 		return 0.0, V3{}, false // we intersected with a line
 	}
 }
+
+func (p Plane) IntersectPath(path *path) (float64, bool) {
+	//check if we intersect the bounding box
+	if !p.BoundBox().IntersectPath(path) {
+		return 0, false
+	}
+
+	rayDir := path.Unit()
+	v0 := p.Points[0]
+	v1 := p.Points[1]
+	v2 := p.Points[2]
+
+	edge1 := SubV3(v1, v0)
+	edge2 := SubV3(v2, v0)
+
+	h := CrossV3(rayDir, edge2)
+	a := DotV3(edge1, h)
+	if a > -PathEpsilon && a < PathEpsilon {
+		return 0, false //this ray is paralell to this triangle
+	}
+	f := 1.0 / a
+	s := SubV3(path.Origin, v0)
+	u := f * DotV3(s, h)
+	if u < 0.0 || u > 1.0 {
+		return 0, false
+	}
+	q := CrossV3(s, edge1)
+	v := f * DotV3(rayDir, q)
+	if v < 0.0 || u+v > 1.0 {
+		return 0, false
+	}
+
+	//Compute t to find our intersection
+	t := f * DotV3(edge2, q)
+	if t > PathEpsilon {
+		return t, true
+	}
+	return 0, false // we intersected with a line
+}
