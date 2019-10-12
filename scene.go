@@ -317,8 +317,8 @@ func scene2() (*[]Object, *[]Light, Camera) {
 
 func scene3() (*[]Object, *[]Light, Camera) {
 	C := Camera{
-		Width:        1080,
-		Height:       720,
+		Width:        108,
+		Height:       72,
 		FOVx:         120,
 		FOVy:         100,
 		BGColor:      RGB{5, 5, 5},
@@ -500,12 +500,12 @@ func scene3() (*[]Object, *[]Light, Camera) {
 		&AreaLight{
 			Color:     RGB{100, 100, 100},
 			Area:      Plane{Points: [3]V3{V3{-12, 10, -7}, V3{-12, -10, -7}, V3{-12, -10, -19}}},
-			Intensity: 3,
+			Intensity: 5,
 		},
 		&AreaLight{
 			Color:     RGB{100, 100, 100},
 			Area:      Plane{Points: [3]V3{V3{-12, 10, -19}, V3{-12, -10, -19}, V3{-12, 10, -7}}},
-			Intensity: 3,
+			Intensity: 5,
 		},
 	}
 

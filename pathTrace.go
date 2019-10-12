@@ -85,10 +85,10 @@ func (c Camera) pathTrace(objects []split, lights *[]Light, destImage *Image) *I
 		destImage.SetPixel(dest.x, dest.y, colorAvg.RGB())
 
 		//Save a checkpoint
-		if count%50 == 0 {
-			file, err := os.Create("checkpoints/" + destImage.name + "_checkpoint.png")
+		if count%300 == 0 {
+			file, err := os.Create("checkpoints/" + destImage.name + "_PT_checkpoint.png")
 			if err != nil {
-				fmt.Printf("There was a error openin the checkpoint file, Not saving checkpoint\n")
+				fmt.Printf("There was an error opening the checkpoint file, Not saving checkpoint\n")
 			}
 			destImage.WritePNG(file)
 		}

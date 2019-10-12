@@ -16,7 +16,6 @@ type Ray struct {
 	BGColor      RGB
 	AmbientLight RGB
 	CameraOrg    V3
-	TestObj      *[]Object
 
 	//Do some caching so we don't recalculate the same thing over and over
 	dir    V3
@@ -179,7 +178,6 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 				BGColor:      r.BGColor,
 				AmbientLight: r.AmbientLight,
 				CameraOrg:    r.CameraOrg,
-				TestObj:      r.TestObj,
 			}
 			flect.Jitter(0.01)
 			reflect = append(reflect, &flect)
@@ -213,7 +211,6 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 				Dest:         AddV3(apex, tdir),
 				MaxLength:    r.MaxLength,
 				Objects:      r.Objects,
-				TestObj:      r.TestObj,
 				Lights:       r.Lights,
 				BGColor:      r.BGColor,
 				AmbientLight: r.AmbientLight,

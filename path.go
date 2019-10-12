@@ -192,7 +192,7 @@ func (p *path) Color(objects medianSplit, lights *[]Light, background RGB, depth
 		return cColor
 	}
 
-	return MixRGB(color, cColor)
+	return MixRGB(color, MulRGB(PathDecay, cColor))
 }
 
 func (p *path) Next(mat Material, normal V3, jitter float64) *path {

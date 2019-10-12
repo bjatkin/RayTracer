@@ -6,13 +6,14 @@ import (
 )
 
 const SUB_PIXELS = 3
-const DEPTH = 5
-const SHADOW_SAMPLES = 10
-const REFLECT_RAYS = 10
-const TRANS_RAYS = 10
+const DEPTH = 3
+const SHADOW_SAMPLES = 5
+const REFLECT_RAYS = 5
+const TRANS_RAYS = 5
 const JITTER = 0.0025
-const PathAmbientLight = 0.3
-const PathCount = 500
+const PathDecay = 0.3
+const PathAmbientLight = 0.5
+const PathCount = 200
 const PathGoRoutine = 50
 
 func main() {
@@ -28,20 +29,21 @@ func main() {
 
 	if drawType == "both" || drawType == "ray" {
 		fmt.Printf("starting ray trace\n")
-		rayImage := C.Render(
+		rayImage := NewImage(C.Width, C.Height, fileName)
+		rayImage = C.Render(
 			medSplit,
 			lights,
-			objs,
+			rayImage,
 		)
 
-		pngFile2, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/RT_" + fileName + ".png")
+		pngFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/RT_" + fileName + ".png")
 		if err != nil {
 			fmt.Printf("There was an error: %s", err.Error())
 			return
 		}
 
 		fmt.Printf("saving ray trace\n")
-		rayImage.WritePNG(pngFile2)
+		rayImage.WritePNG(pngFile)
 
 	}
 
