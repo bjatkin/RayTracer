@@ -159,7 +159,7 @@ func (p *path) Color(objects medianSplit, lights *[]Light, background RGB, depth
 				t = nextT
 				p.T(t)
 				light = true
-				lightColor = l.GetColor()
+				lightColor = MulRGB(l.GetIntensity(), l.GetColor())
 			}
 		}
 	}

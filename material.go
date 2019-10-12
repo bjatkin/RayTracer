@@ -8,8 +8,6 @@ type Material struct {
 	DiffCoeff    float64
 	DiffColor    RGB
 	TransCoeff   float64
-	EmisiveColor RGB
-	EmisiveCoeff float64
 	Phong        float64
 	ReflectCoeff float64
 	RefractCoeff float64

@@ -303,11 +303,11 @@ func scene2() (*[]Object, *[]Light, Camera) {
 
 	lights := &[]Light{
 		&AreaLight{
-			Color: RGB{200, 200, 200},
+			Color: RGB{250, 250, 250},
 			Area:  Plane{Points: [3]V3{V3{-16, 3, -10}, V3{-16, -3, -10}, V3{-16, -3, -15}}},
 		},
 		&AreaLight{
-			Color: RGB{200, 200, 200},
+			Color: RGB{250, 250, 250},
 			Area:  Plane{Points: [3]V3{V3{-16, 3, -15}, V3{-16, -3, -15}, V3{-16, 3, -10}}},
 		},
 	}
@@ -317,9 +317,9 @@ func scene2() (*[]Object, *[]Light, Camera) {
 
 func scene3() (*[]Object, *[]Light, Camera) {
 	C := Camera{
-		Width:        300,
-		Height:       300,
-		FOVx:         100,
+		Width:        1080,
+		Height:       720,
+		FOVx:         120,
 		FOVy:         100,
 		BGColor:      RGB{5, 5, 5},
 		Fpoint:       V3{-7, 0, 15},
@@ -498,12 +498,14 @@ func scene3() (*[]Object, *[]Light, Camera) {
 
 	lights := &[]Light{
 		&AreaLight{
-			Color: RGB{100, 100, 100},
-			Area:  Plane{Points: [3]V3{V3{-12, 10, -7}, V3{-12, -10, -7}, V3{-12, -10, -19}}},
+			Color:     RGB{100, 100, 100},
+			Area:      Plane{Points: [3]V3{V3{-12, 10, -7}, V3{-12, -10, -7}, V3{-12, -10, -19}}},
+			Intensity: 3,
 		},
 		&AreaLight{
-			Color: RGB{100, 100, 100},
-			Area:  Plane{Points: [3]V3{V3{-12, 10, -19}, V3{-12, -10, -19}, V3{-12, 10, -7}}},
+			Color:     RGB{100, 100, 100},
+			Area:      Plane{Points: [3]V3{V3{-12, 10, -19}, V3{-12, -10, -19}, V3{-12, 10, -7}}},
+			Intensity: 3,
 		},
 	}
 

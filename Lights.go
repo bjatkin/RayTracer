@@ -9,6 +9,7 @@ import (
 type Light interface {
 	ToLight(V3) V3
 	GetColor() RGB
+	GetIntensity() float64
 	SampleSize() int
 	Intersect(*path) (float64, bool)
 }
@@ -17,6 +18,10 @@ type Light interface {
 type PointLight struct {
 	Loc   V3
 	Color RGB
+}
+
+func (l *PointLight) GetIntensity() float64 {
+	return 0
 }
 
 //TODO finish this as a sphere
@@ -47,6 +52,10 @@ type DirLight struct {
 	MaxDist float64
 }
 
+func (l *DirLight) GetIntensity() float64 {
+	return 0
+}
+
 //TODO finish this with dot products stuff
 func (l *DirLight) Intersect(p *path) (float64, bool) {
 	return 0, false
@@ -71,8 +80,13 @@ func (l *DirLight) GetColor() RGB {
 
 //AreaLight is an area light source
 type AreaLight struct {
-	Area  Plane
-	Color RGB
+	Area      Plane
+	Intensity float64
+	Color     RGB
+}
+
+func (l *AreaLight) GetIntensity() float64 {
+	return l.Intensity
 }
 
 func (l *AreaLight) Intersect(p *path) (float64, bool) {

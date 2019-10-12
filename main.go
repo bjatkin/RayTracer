@@ -5,20 +5,14 @@ import (
 	"os"
 )
 
-// const SUB_PIXELS = 1
-// const DEPTH = 3
-// const SHADOW_SAMPLES = 1
-// const REFLECT_RAYS = 1
-// const TRANS_RAYS = 1
-
-const SUB_PIXELS = 1
+const SUB_PIXELS = 3
 const DEPTH = 5
-const SHADOW_SAMPLES = 1
-const REFLECT_RAYS = 1
-const TRANS_RAYS = 1
-const JITTER = 0.01
+const SHADOW_SAMPLES = 10
+const REFLECT_RAYS = 10
+const TRANS_RAYS = 10
+const JITTER = 0.0025
 const PathAmbientLight = 0.3
-const PathCount = 50
+const PathCount = 500
 const PathGoRoutine = 50
 
 func main() {
@@ -53,7 +47,7 @@ func main() {
 
 	if drawType == "both" || drawType == "path" {
 		fmt.Printf("starting path trace\n")
-		pathFile := NewImage(C.Width, C.Height, "PathTraceChess")
+		pathFile := NewImage(C.Width, C.Height, fileName)
 		pathFile = C.pathTrace(
 			medSplit,
 			lights,

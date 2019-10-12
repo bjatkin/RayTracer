@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"time"
 )
 
 //V3 is a 4D vector
@@ -170,7 +171,20 @@ func Deg(rad float64) float64 {
 	return rad * (180 / math.Pi)
 }
 
+var randSeed = false
+
 //RandGaus returns a random number between -1 to 1 with a gausian distribution
 func RandGaus() float64 {
-	return rand.NormFloat64() / math.MaxFloat64
+	if !randSeed {
+		rand.Seed(time.Now().Unix())
+		randSeed = true
+	}
+	ret := rand.NormFloat64() / 3
+	if ret > 1 {
+		return 1
+	}
+	if ret < -1 {
+		return -1
+	}
+	return ret
 }

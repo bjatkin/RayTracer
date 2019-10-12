@@ -85,7 +85,7 @@ func AddRGB(a, b RGB) RGB {
 	ret.R = a.R + b.R
 	ret.G = a.G + b.G
 	ret.B = a.B + b.B
-	ret.Clamp()
+	// ret.Clamp()
 	return ret
 }
 
@@ -94,7 +94,7 @@ func MulRGB(scale float64, rgb RGB) RGB {
 	ret.R = rgb.R * scale
 	ret.G = rgb.G * scale
 	ret.B = rgb.B * scale
-	ret.Clamp()
+	// ret.Clamp()
 	return ret
 }
 
@@ -103,7 +103,7 @@ func MixRGB(a, b RGB) RGB {
 	ret.R = (a.R / 255.0) * (b.R / 255.0) * 255.0
 	ret.G = (a.G / 255.0) * (b.G / 255.0) * 255.0
 	ret.B = (a.B / 255.0) * (b.B / 255.0) * 255.0
-	ret.Clamp()
+	// ret.Clamp()
 	return ret
 }
 
