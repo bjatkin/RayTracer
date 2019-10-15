@@ -117,7 +117,22 @@ func (p path) Transmit(normal V3, refraction float64, jitter float64) path {
 }
 
 func (p path) Diffuse(normal V3) path {
-	dir := Unit(JitterV3(1-PathEpsilon, Unit(normal)))
+	d := 2.0
+	dir := V3{}
+	for d > 1 {
+		dir = RandV3(1)
+		d = math.Sqrt(dir.x*dir.x + dir.y*dir.y + dir.z*dir.z)
+	}
+	dir.x = dir.x / d
+	dir.y = dir.y / d
+	dir.z = dir.z / d
+
+	//check if we need to flip the vector
+	if DotV3(Unit(normal), dir) < 0 {
+		dir = MulV3(-1, dir)
+	}
+
+	// dir := Unit(JitterV3(1-PathEpsilon, Unit(normal)))
 	origin := AddV3(p.Dest(), MulV3(PathEpsilon, dir))
 
 	ret := newDirPath(origin, dir, p.maxDist)
@@ -189,10 +204,10 @@ func (p *path) Color(objects medianSplit, lights *[]Light, background RGB, depth
 
 	cColor := child.Color(objects, lights, background, depth-1)
 	if child.pType == pTypeTrans || child.pType == pTypeRefl {
-		return cColor
+		return cColor //??? mix with the difuse/spec?
 	}
 
-	return MixRGB(color, MulRGB(PathDecay, cColor))
+	return MixRGB(color, MulRGB(PathDecay, cColor)) //Rather than decay use weighted mix?
 }
 
 func (p *path) Next(mat Material, normal V3, jitter float64) *path {

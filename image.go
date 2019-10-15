@@ -98,7 +98,9 @@ func MulRGB(scale float64, rgb RGB) RGB {
 	return ret
 }
 
-func MixRGB(a, b RGB) RGB {
+//MixRGB mixes colors a and b with the given weight + for a and - for b
+func MixRGB(a, b RGB, weight float64) RGB {
+	//TODO implement this method
 	ret := RGB{}
 	ret.R = (a.R / 255.0) * (b.R / 255.0) * 255.0
 	ret.G = (a.G / 255.0) * (b.G / 255.0) * 255.0

@@ -11,10 +11,10 @@ const SHADOW_SAMPLES = 5
 const REFLECT_RAYS = 5
 const TRANS_RAYS = 5
 const JITTER = 0.0025
-const PathDecay = 0.3
-const PathAmbientLight = 0.5
-const PathCount = 200
-const PathGoRoutine = 50
+const PathDecay = 1
+const PathAmbientLight = 0.3
+const PathCount = 20
+const PathGoRoutine = 20
 
 func main() {
 	objs, lights, C := scene3() //scene2() //scene1()
