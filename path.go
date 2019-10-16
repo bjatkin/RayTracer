@@ -185,7 +185,7 @@ func (p *path) Color(objects medianSplit, lights *[]Light, background RGB, depth
 
 	//calculate lighting depending on the type of ray that I am
 	if t == p.maxDist {
-		if p.pType == pTypeOrigin || p.pType == pTypeTrans || p.pType == pTypeRefl {
+		if p.pType == pTypeOrigin { //|| p.pType == pTypeTrans || p.pType == pTypeRefl {
 			return background
 		}
 
@@ -199,15 +199,16 @@ func (p *path) Color(objects medianSplit, lights *[]Light, background RGB, depth
 	}
 
 	if depth == 0 {
-		return MixRGB(MulRGB(PathAmbientLight, White), color)
+		return MixRGB(MulRGB(PathAmbientLight, White), color, 0)
 	}
 
 	cColor := child.Color(objects, lights, background, depth-1)
 	if child.pType == pTypeTrans || child.pType == pTypeRefl {
-		return cColor //??? mix with the difuse/spec?
+		return cColor
+		// return MixRGB(cColor, color, mat.TransCoeff) //??? mix with the difuse/spec?
 	}
 
-	return MixRGB(color, MulRGB(PathDecay, cColor)) //Rather than decay use weighted mix?
+	return MixRGB(color, cColor, PathDecay) //Rather than decay use weighted mix?
 }
 
 func (p *path) Next(mat Material, normal V3, jitter float64) *path {

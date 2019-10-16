@@ -11,13 +11,13 @@ const SHADOW_SAMPLES = 5
 const REFLECT_RAYS = 5
 const TRANS_RAYS = 5
 const JITTER = 0.0025
-const PathDecay = 1
-const PathAmbientLight = 0.3
-const PathCount = 20
+const PathDecay = 0.1
+const PathAmbientLight = 0.5
+const PathCount = 500
 const PathGoRoutine = 20
 
 func main() {
-	objs, lights, C := scene3() //scene2() //scene1()
+	objs, lights, C := scene1()
 
 	drawType := "ray"
 	fileName := "defult"

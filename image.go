@@ -100,13 +100,25 @@ func MulRGB(scale float64, rgb RGB) RGB {
 
 //MixRGB mixes colors a and b with the given weight + for a and - for b
 func MixRGB(a, b RGB, weight float64) RGB {
-	//TODO implement this method
+	if weight < 0 {
+		b = Whiten(b, weight)
+	} else {
+		a = Whiten(a, -weight)
+	}
+
 	ret := RGB{}
-	ret.R = (a.R / 255.0) * (b.R / 255.0) * 255.0
-	ret.G = (a.G / 255.0) * (b.G / 255.0) * 255.0
-	ret.B = (a.B / 255.0) * (b.B / 255.0) * 255.0
+	ret.R = ((a.R / 255.0) * (b.R / 255.0)) * 255.0
+	ret.G = ((a.G / 255.0) * (b.G / 255.0)) * 255.0
+	ret.B = ((a.B / 255.0) * (b.B / 255.0)) * 255.0
 	// ret.Clamp()
 	return ret
+}
+
+func Whiten(color RGB, amount float64) RGB {
+	mag := color.V3().Magnitude()
+	wVec := SubV3(White.V3(), color.V3())
+	dest := AddV3(color.V3(), MulV3(amount, wVec))
+	return MulV3(mag/dest.Magnitude(), dest).RGB()
 }
 
 func (rgb *RGB) Clamp() {

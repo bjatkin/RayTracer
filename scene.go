@@ -33,25 +33,25 @@ func scene1() (*[]Object, *[]Light, Camera) {
 	}
 	whiteWall := Material{
 		AmbCoeff:  0.1,
-		DiffCoeff: 0.8,
+		DiffCoeff: 1,
 		DiffColor: RGB{255, 255, 255},
-		SpecCoeff: 0.2,
+		SpecCoeff: 0,
 		SpecColor: RGB{255, 255, 255},
 		Phong:     10,
 	}
 	redWall := Material{
 		AmbCoeff:  0.1,
-		DiffCoeff: 0.8,
+		DiffCoeff: 1,
 		DiffColor: RGB{170, 30, 30},
-		SpecCoeff: 0.2,
+		SpecCoeff: 0,
 		SpecColor: RGB{255, 255, 255},
 		Phong:     10,
 	}
 	blueWall := Material{
 		AmbCoeff:  0.1,
-		DiffCoeff: 0.8,
+		DiffCoeff: 1,
 		DiffColor: RGB{0, 60, 170},
-		SpecCoeff: 0.2,
+		SpecCoeff: 0,
 		SpecColor: RGB{255, 255, 255},
 		Phong:     10,
 	}
@@ -109,12 +109,14 @@ func scene1() (*[]Object, *[]Light, Camera) {
 	}
 	lights := &[]Light{
 		&AreaLight{
-			Color: RGB{255, 255, 255},
-			Area:  Plane{Points: [3]V3{V3{-16, 3, -10}, V3{-16, -3, -10}, V3{-16, -3, -15}}},
+			Color:     RGB{255, 255, 255},
+			Area:      Plane{Points: [3]V3{V3{-16, 3, -10}, V3{-16, -3, -10}, V3{-16, -3, -15}}},
+			Intensity: 4,
 		},
 		&AreaLight{
-			Color: RGB{255, 255, 255},
-			Area:  Plane{Points: [3]V3{V3{-16, 3, -15}, V3{-16, -3, -15}, V3{-16, 3, -10}}},
+			Color:     RGB{255, 255, 255},
+			Area:      Plane{Points: [3]V3{V3{-16, 3, -15}, V3{-16, -3, -15}, V3{-16, 3, -10}}},
+			Intensity: 4,
 		},
 	}
 
@@ -330,9 +332,9 @@ func scene3() (*[]Object, *[]Light, Camera) {
 
 	whiteTile := Material{
 		AmbCoeff:     0.2,
-		DiffCoeff:    0.6,
+		DiffCoeff:    0.8,
 		DiffColor:    RGB{250, 250, 250},
-		SpecCoeff:    0.4,
+		SpecCoeff:    0.2,
 		SpecColor:    RGB{255, 255, 255},
 		Phong:        150,
 		ReflectCoeff: 0.5,
@@ -357,19 +359,19 @@ func scene3() (*[]Object, *[]Light, Camera) {
 	}
 	S2 := Material{
 		AmbCoeff:     0.1,
-		DiffCoeff:    0.2,
+		DiffCoeff:    0.1,
 		DiffColor:    RGB{200, 100, 0},
-		SpecCoeff:    0.8,
+		SpecCoeff:    0.1,
 		SpecColor:    RGB{255, 255, 255},
-		TransCoeff:   0.5,
+		TransCoeff:   0.8,
 		Phong:        200,
 		RefractCoeff: 0.8,
 	}
 	S3 := Material{
 		AmbCoeff:  0.2,
-		DiffCoeff: 0.7,
+		DiffCoeff: 1,
 		DiffColor: RGB{5, 255, 255},
-		SpecCoeff: 0.3,
+		SpecCoeff: 0,
 		SpecColor: RGB{255, 255, 255},
 		Phong:     20,
 	}
@@ -500,12 +502,12 @@ func scene3() (*[]Object, *[]Light, Camera) {
 		&AreaLight{
 			Color:     RGB{100, 100, 100},
 			Area:      Plane{Points: [3]V3{V3{-12, 10, -7}, V3{-12, -10, -7}, V3{-12, -10, -19}}},
-			Intensity: 3,
+			Intensity: 4,
 		},
 		&AreaLight{
 			Color:     RGB{100, 100, 100},
 			Area:      Plane{Points: [3]V3{V3{-12, 10, -19}, V3{-12, -10, -19}, V3{-12, 10, -7}}},
-			Intensity: 3,
+			Intensity: 4,
 		},
 	}
 
