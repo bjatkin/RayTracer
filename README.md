@@ -20,3 +20,5 @@ This is a small raytracer writen in go for CS 655 Advanced Compouter Graphics
     * make switching back and forth between ray/path tracing easier
     * configure multi-threading stuff easier
     * configure other options like rays per pixel/ bounces etc. easier
+ * Add more example renders
+ * Parse data from a file instead of hard coding the scean

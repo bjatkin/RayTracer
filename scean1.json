@@ -1,0 +1,141 @@
+{
+    "Camera":{
+        "Width": 1080,
+        "Height": 720,
+        "FOVx": 120,
+        "FOVy": 100,
+        "GBColor": [0, 0, 0],
+        "Fpoint": [-7, 0, 15],
+        "Lpoint": [-7, 0, 14],
+        "Clip": 5000,
+        "AmbientLight": [255, 255, 255]
+    },
+    "Materials":[
+        {
+            "Name": "S1",
+            "AmbCoeff":     0.2,
+            "DiffCoeff":    0.4,
+            "DiffColor":    [255, 255, 255],
+            "SpecCoeff":    0.6,
+            "SpecColor":    [255, 255, 255],
+            "Phong":        150,
+            "ReflectCoeff": 0.6
+        },
+        {
+            "Name": "S2",
+            "AmbCoeff":     0.0,
+            "DiffCoeff":    0.2,
+            "DiffColor":    [225, 225, 255],
+            "SpecCoeff":    0.8,
+            "SpecColor":    [255, 255, 255],
+            "TransCoeff":   0.9,
+            "Phong":        200,
+            "RefractCoeff": 0.9
+        },
+        {
+            "Name": "whiteWall",
+            "AmbCoeff":  0.1,
+            "DiffCoeff": 1,
+            "DiffColor": [255, 255, 255],
+            "SpecCoeff": 0,
+            "SpecColor": [255, 255, 255],
+            "Phong":     10
+        },
+        {
+            "Name": "redWall",
+            "AmbCoeff":  0.1,
+            "DiffCoeff": 1,
+            "DiffColor": [170, 30, 30],
+            "SpecCoeff": 0,
+            "SpecColor": [255, 255, 255],
+            "Phong":     10
+        },
+        {
+            "Name": "blueWall",
+            "AmbCoeff":  0.1,
+            "DiffCoeff": 1,
+            "DiffColor": [0, 60, 170],
+            "SpecCoeff": 0,
+            "SpecColor": [255, 255, 255],
+            "Phong":     10
+        }
+    ],
+    "Objects": [
+		{
+            "Type": "Sphere",
+			"Loc": [-5, -5, -9],
+			"Rad": 3,
+			"Mat": "S1"
+		},
+		{
+            "Type": "Sphere",
+			"Loc": [0, 4, -7],
+			"Rad": 4,
+			"Mat": "S2"
+		},
+		{
+            "Type": "Plane",
+			"Points": [3, 10, -21, 3, -10, -1, 3, 10, -1],
+			"Mat":    "whiteWall"
+		},
+		{
+            "Type": "Plane",
+			"Points": [3, -10, -1, 3, 10, -21, 3, -10, -21],
+			"Mat":    "whiteWall"
+		},
+		{
+            "Type": "Plane",
+			"Points": [3, -10, -21, 3, 10, -21, -17, 10, -21],
+			"Mat":    "whiteWall"
+		},
+		{
+            "Type": "Plane",
+			"Points": [-17, -10, -21, 3, -10, -21, -17, 10, -21],
+			"Mat":    "whiteWall"
+		},
+		{
+            "Type": "Plane",
+			"Points": [3, -10, -1, 3, -10, -21, -17, -10, -1],
+			"Mat":    "blueWall"
+		},
+		{
+            "Type": "Plane",
+			"Points": [-17, -10, -1, 3, -10, -21, -17, -10, -21],
+			"Mat":    "blueWall"
+		},
+		{
+            "Type": "Plane",
+			"Points": [3, 10, -21, 3, 10, -1, -17, 10, -1],
+			"Mat":    "redWall"
+		},
+		{
+            "Type": "Plane",
+			"Points": [3, 10, -21, -17, 10, -1, -17, 10, -21],
+			"Mat":    "redWall"
+		},
+		{
+            "Type": "Plane",
+			"Points": [-17, -10, -1, -17, 10, -21, -17, 10, -1],
+			"Mat":    "whiteWall"
+		},
+		{
+            "Type": "Plane",
+			"Points": [-17, 10, -21, -17, -10, -1, -17, -10, -21],
+			"Mat":    "whiteWall"
+		}
+    ],
+    "Lights": [
+		{
+            "Type": "AreaLight",
+			"Color":     [255, 255, 255],
+			"Area":      [-16, 3, -10, -16, -3, -10, -16, -3, -15],
+			"Intensity": 4
+		},
+		{
+            "Type": "AreaLight",
+			"Color":     [255, 255, 255],
+			"Area":      [-16, 3, -15, -16, -3, -15, -16, 3, -10],
+			"Intensity": 4
+		}
+    ]
+}

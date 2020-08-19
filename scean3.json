@@ -1,0 +1,219 @@
+{
+	"Camera":{
+		"Width":        1080,
+		"Height":       720,
+		"FOVx":         120,
+		"FOVy":         100,
+		"BGColor":      [5, 5, 5],
+		"Fpoint":       [-7, 0, 15],
+		"Lpoint":       [-7, 0, 14],
+		"Clip":         5000,
+		"AmbientLight": [255, 255, 255]
+	},
+    "Materials":[
+        {
+            "Name": "whiteTile",
+            "AmbCoeff":     0.2,
+            "DiffCoeff":    0.8,
+            "DiffColor":    [250, 250, 250],
+            "SpecCoeff":    0.2,
+            "SpecColor":    [255, 255, 255],
+            "Phong":        150,
+            "ReflectCoeff": 0.5
+        },
+        {
+            "Name": "blackTile",
+            "AmbCoeff":     0.0,
+            "DiffCoeff":    0.6,
+            "DiffColor":    [2, 2, 2],
+            "SpecCoeff":    0.4,
+            "SpecColor":    [255, 255, 255],
+            "Phong":        150,
+            "ReflectCoeff": 0.4
+        },
+        {
+            "Name": "S1",
+            "AmbCoeff":     0.2,
+            "DiffCoeff":    0.4,
+            "DiffColor":    [150, 255, 0],
+            "SpecCoeff":    0.6,
+            "SpecColor":    [255, 255, 255],
+            "Phong":        150,
+            "ReflectCoeff": 0.6
+        },
+        {
+            "Name": "S2",
+            "AmbCoeff":     0.1,
+            "DiffCoeff":    0.1,
+            "DiffColor":    [200, 100, 0],
+            "SpecCoeff":    0.1,
+            "SpecColor":    [255, 255, 255],
+            "TransCoeff":   0.8,
+            "Phong":        200,
+            "RefractCoeff": 0.8
+        },
+        {
+            "Name": "S3",
+            "AmbCoeff":  0.2,
+            "DiffCoeff": 1,
+            "DiffColor": [5, 255, 255],
+            "SpecCoeff": 0,
+            "SpecColor": [255, 255, 255],
+            "Phong":     20
+        }
+    ],
+    "Objects": [
+		{
+		    "Type": "Sphere",
+			"Loc": [2, -5, -10],
+			"Rad": 3,
+			"Mat": "S1"
+		},
+		{
+		    "Type": "Sphere",
+			"Loc": [0, 4, -7],
+			"Rad": 4,
+			"Mat": "S2"
+		},
+		{
+		    "Type": "Sphere",
+			"Loc": [-2, 0, -22],
+			"Rad": 7,
+			"Mat": "S3"
+		},
+		{
+		    "Type": "Plane",
+			"Points": [5, -18, -4, 5, -6, -4, 5, -18, -10],
+			"Mat":    "blackTile"
+		},
+        {
+            "Type": "Plane",
+			"Points": [5, -6, -10, 5, -18, -10, 5, -6, -4],
+			"Mat":    "blackTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -4, 5, 6, -4, 5, 6, -10],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -4, 5, 6, -10, 5, -6, -10],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, 6, -4, 5, 18, -4, 5, 18, -10],
+			"Mat":    "blackTile"
+		},
+		{
+		"Type": "Plane",
+			"Points": [5, 18, -10, 5, 6, -10, 5, 6, -4],
+			"Mat":    "blackTile"
+		},
+		{
+		    "Type": "Plane",
+			"Points": [5, -18, -10, 5, -6, -10, 5, -18, -16],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -16, 5, -18, -16, 5, -6, -10],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -10, 5, 6, -10, 5, 6, -16],
+			"Mat":    "blackTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -10, 5, 6, -16, 5, -6, -16],
+			"Mat":    "blackTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, 6, -10, 5, 18, -10, 5, 18, -16],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, 18, -16, 5, 6, -16, 5, 6, -10],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -18, -16, 5, -6, -16, 5, -18, -22],
+			"Mat":    "blackTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -22, 5, -18, -22, 5, -6, -16],
+			"Mat":    "blackTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -16, 5, 6, -16, 5, 6, -22],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -16, 5, 6, -22, 5, -6, -22],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, 6, -16, 5, 18, -16, 5, 18, -22],
+			"Mat":    "blackTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, 18, -22, 5, 6, -22, 5, 6, -16],
+			"Mat":    "blackTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -18, -22, 5, -6, -22, 5, -18, -28],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -28, 5, -18, -28, 5, -6, -22],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -22, 5, 6, -22, 5, 6, -28],
+			"Mat":    "blackTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, -6, -22, 5, 6, -28, 5, -6, -28],
+			"Mat":    "blackTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, 6, -22, 5, 18, -22, 5, 18, -28],
+			"Mat":    "whiteTile"
+		},
+		{
+            "Type": "Plane",
+			"Points": [5, 18, -28, 5, 6, -28, 5, 6, -22],
+			"Mat":    "whiteTile"
+		}
+    ],
+	"Lights": [
+		{
+		    "Type": "AreaLight",
+			"Color":     [100, 100, 100],
+			"Area":      [-12, 10, -7, -12, -10, -7, -12, -10, -19],
+			"Intensity": 4
+		},
+		{
+            "Type": "AreaLight",
+			"Color":     [100, 100, 100],
+			"Area":      [-12, 10, -19, -12, -10, -19, -12, 10, -7],
+			"Intensity": 4
+		}
+	]
+}
