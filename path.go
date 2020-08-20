@@ -5,13 +5,15 @@ import (
 	"math/rand"
 )
 
-const PathEpsilon = 0.000001
+const pathEpsilon = 0.000001
 
-const pTypeOrigin = 0
-const pTypeSpec = 1
-const pTypeDiff = 2
-const pTypeTrans = 3
-const pTypeRefl = 4
+const (
+	pTypeOrigin = 0
+	pTypeSpec   = 1
+	pTypeDiff   = 2
+	pTypeTrans  = 3
+	pTypeRefl   = 4
+)
 
 type path struct {
 	Origin          V3
@@ -80,7 +82,7 @@ func (p *path) Unit() V3 {
 
 func (p path) Reflect(normal V3, jitter float64) path {
 	dir := Unit(ReflectV3(p.Dir(), normal))
-	origin := AddV3(p.Dest(), MulV3(PathEpsilon, dir))
+	origin := AddV3(p.Dest(), MulV3(pathEpsilon, dir))
 	if jitter > 0 {
 		dir = JitterV3(jitter, dir)
 	}
@@ -106,7 +108,7 @@ func (p path) Transmit(normal V3, refraction float64, jitter float64) path {
 	p3 := nit*cos - p2
 
 	dir := AddV3(p1, MulV3(p3, N))
-	origin := AddV3(p.Dest(), MulV3(PathEpsilon, dir))
+	origin := AddV3(p.Dest(), MulV3(pathEpsilon, dir))
 	if jitter > 0 {
 		dir = JitterV3(jitter, dir)
 	}
@@ -132,8 +134,7 @@ func (p path) Diffuse(normal V3) path {
 		dir = MulV3(-1, dir)
 	}
 
-	// dir := Unit(JitterV3(1-PathEpsilon, Unit(normal)))
-	origin := AddV3(p.Dest(), MulV3(PathEpsilon, dir))
+	origin := AddV3(p.Dest(), MulV3(pathEpsilon, dir))
 
 	ret := newDirPath(origin, dir, p.maxDist)
 	ret.pType = pTypeDiff
@@ -185,30 +186,29 @@ func (p *path) Color(objects medianSplit, lights *[]Light, background RGB, depth
 
 	//calculate lighting depending on the type of ray that I am
 	if t == p.maxDist {
-		if p.pType == pTypeOrigin { //|| p.pType == pTypeTrans || p.pType == pTypeRefl {
+		if p.pType == pTypeOrigin {
 			return background
 		}
 
-		return MulRGB(PathAmbientLight, White)
+		return MulRGB(pathAmbientLight, White)
 	}
 
-	child := p.Next(mat, normal, JITTER)
+	child := p.Next(mat, normal, jitter)
 	color := mat.DiffColor
 	if child.pType == pTypeSpec || child.pType == pTypeRefl {
 		color = mat.SpecColor
 	}
 
 	if depth == 0 {
-		return MixRGB(MulRGB(PathAmbientLight, White), color, 0)
+		return MixRGB(MulRGB(pathAmbientLight, White), color, 0)
 	}
 
 	cColor := child.Color(objects, lights, background, depth-1)
 	if child.pType == pTypeTrans || child.pType == pTypeRefl {
 		return cColor
-		// return MixRGB(cColor, color, mat.TransCoeff) //??? mix with the difuse/spec?
 	}
 
-	return MixRGB(color, cColor, PathDecay) //Rather than decay use weighted mix?
+	return MixRGB(color, cColor, pathDecay)
 }
 
 func (p *path) Next(mat Material, normal V3, jitter float64) *path {

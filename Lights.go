@@ -14,17 +14,20 @@ type Light interface {
 	Intersect(*path) (float64, bool)
 }
 
-//PointLight is a point light object
+// PointLight is a point light object
 type PointLight struct {
 	Loc   V3
 	Color RGB
 }
 
+// GetIntensity gets the intensity of the light
+// It's not currently used in the path tracer so it always
+// returns 0
 func (l *PointLight) GetIntensity() float64 {
 	return 0
 }
 
-//TODO finish this as a sphere
+// TODO finish this as a sphere
 func (l *PointLight) Intersect(p *path) (float64, bool) {
 	return 0, false
 }
@@ -34,7 +37,7 @@ func (l *PointLight) ToLight(from V3) V3 {
 	return SubV3(l.Loc, from)
 }
 
-//SampleSize returns the number of samples needed to
+// SampleSize returns the number of samples needed to
 // have an accurate representation of the light source
 func (l *PointLight) SampleSize() int {
 	return 1
@@ -52,6 +55,9 @@ type DirLight struct {
 	MaxDist float64
 }
 
+// GetIntensity gets the intensity of the directional light
+// It's not currently used in the path tracer so it always
+// returns 0
 func (l *DirLight) GetIntensity() float64 {
 	return 0
 }
@@ -61,10 +67,9 @@ func (l *DirLight) Intersect(p *path) (float64, bool) {
 	return 0, false
 }
 
-//ToLight is the vector direction of the light
+// ToLight is the vector direction of the light
 func (l *DirLight) ToLight(from V3) V3 {
 	return l.Dir
-	//return MulV3(l.MaxDist, l.Dir)
 }
 
 //SampleSize returns the number of samples needed to
@@ -78,17 +83,19 @@ func (l *DirLight) GetColor() RGB {
 	return l.Color
 }
 
-//AreaLight is an area light source
+// AreaLight is an area light source
 type AreaLight struct {
 	Area      Plane
 	Intensity float64
 	Color     RGB
 }
 
+// GetIntensity is returns the intensity of the area light
 func (l *AreaLight) GetIntensity() float64 {
 	return l.Intensity
 }
 
+// Intersect reternts the interction of the path and the area light
 func (l *AreaLight) Intersect(p *path) (float64, bool) {
 	return l.Area.IntersectPath(p)
 }
@@ -111,7 +118,7 @@ func (l *AreaLight) ToLight(from V3) V3 {
 //SampleSize returns the number of samples needed to
 // have an accurate representation of the light source
 func (l *AreaLight) SampleSize() int {
-	return SHADOW_SAMPLES
+	return shadowSamples
 }
 
 //GetColor returns the color of the light

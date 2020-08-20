@@ -106,9 +106,8 @@ func (p Plane) Intersect(ray *Ray) (float64, V3, bool) {
 			Dest:   AddV3(ray.Origin, rayDir),
 		}
 		return t, ret.Scale(t).Dest, true
-	} else {
-		return 0.0, V3{}, false // we intersected with a line
 	}
+	return 0.0, V3{}, false // we intersected with a line
 }
 
 func (p Plane) IntersectPath(path *path) (float64, bool) {
@@ -127,7 +126,7 @@ func (p Plane) IntersectPath(path *path) (float64, bool) {
 
 	h := CrossV3(rayDir, edge2)
 	a := DotV3(edge1, h)
-	if a > -PathEpsilon && a < PathEpsilon {
+	if a > -pathEpsilon && a < pathEpsilon {
 		return 0, false //this ray is paralell to this triangle
 	}
 	f := 1.0 / a
@@ -144,7 +143,7 @@ func (p Plane) IntersectPath(path *path) (float64, bool) {
 
 	//Compute t to find our intersection
 	t := f * DotV3(edge2, q)
-	if t > PathEpsilon {
+	if t > pathEpsilon {
 		return t, true
 	}
 	return 0, false // we intersected with a line

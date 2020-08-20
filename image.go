@@ -71,7 +71,10 @@ type RGB struct {
 	B float64
 }
 
+// White is the RGB representation of pure white
 var White = RGB{R: 255, G: 255, B: 255}
+
+// Black is the RGB representation of pure black
 var Black = RGB{R: 0, G: 0, B: 0}
 
 func (rgb RGB) String() string {
@@ -80,25 +83,25 @@ func (rgb RGB) String() string {
 		strconv.FormatInt(int64(rgb.B), 10)
 }
 
+// AddRGB adds two RGB colors together
 func AddRGB(a, b RGB) RGB {
 	ret := RGB{}
 	ret.R = a.R + b.R
 	ret.G = a.G + b.G
 	ret.B = a.B + b.B
-	// ret.Clamp()
 	return ret
 }
 
+// MulRGB multiplies each element of an RGB color by a scaler
 func MulRGB(scale float64, rgb RGB) RGB {
 	ret := RGB{}
 	ret.R = rgb.R * scale
 	ret.G = rgb.G * scale
 	ret.B = rgb.B * scale
-	// ret.Clamp()
 	return ret
 }
 
-//MixRGB mixes colors a and b with the given weight + for a and - for b
+// MixRGB mixes colors a and b with the given weight + for a and - for b
 func MixRGB(a, b RGB, weight float64) RGB {
 	if weight < 0 {
 		b = Whiten(b, weight)
@@ -114,6 +117,7 @@ func MixRGB(a, b RGB, weight float64) RGB {
 	return ret
 }
 
+// Whiten makes an RGB color more white
 func Whiten(color RGB, amount float64) RGB {
 	mag := color.V3().Magnitude()
 	wVec := SubV3(White.V3(), color.V3())
@@ -121,6 +125,9 @@ func Whiten(color RGB, amount float64) RGB {
 	return MulV3(mag/dest.Magnitude(), dest).RGB()
 }
 
+// Clamp prevents any element of an RGB element
+// from going over 255 which is the max value for
+// 8 bit color
 func (rgb *RGB) Clamp() {
 	if rgb.R > 255 {
 		rgb.R = 255
@@ -151,12 +158,12 @@ func (rgb RGB) V3() V3 {
 	}
 }
 
-//SetPixel colors a pixel at the given x, y coord
+// SetPixel colors a pixel at the given x, y coord
 func (p *Image) SetPixel(x, y int, rgb RGB) {
 	p.pixels[y*p.width+x] = rgb
 }
 
-//GetPixel returns the rgb value of the pixel at x, y coord
+// GetPixel returns the rgb value of the pixel at x, y coord
 func (p *Image) GetPixel(x, y int) RGB {
 	return p.pixels[y*p.width+x]
 }

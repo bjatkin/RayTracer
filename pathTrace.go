@@ -34,7 +34,7 @@ func (c Camera) pathTrace(objects []split, lights *[]Light, destImage *Image) *I
 
 	//Track our progress
 	progress := progressBar{
-		total: c.Width * c.Height * PathCount,
+		total: c.Width * c.Height * pathCount,
 		len:   70,
 	}
 	progress.Draw()
@@ -48,18 +48,18 @@ func (c Camera) pathTrace(objects []split, lights *[]Light, destImage *Image) *I
 		}
 
 		color := V3{}
-		colorChan := make(chan V3, PathGoRoutine)
+		colorChan := make(chan V3, pathGoRoutine)
 		chanCount := 0
-		for pCount := 0; pCount < PathCount; pCount++ {
+		for pCount := 0; pCount < pathCount; pCount++ {
 			chanCount++
 			go func() {
-				path := newDestPath(c.Fpoint, JitterV3(JITTER, dest.pos), c.Clip)
-				col := path.Color(objects, lights, c.BGColor, DEPTH)
+				path := newDestPath(c.Fpoint, JitterV3(jitter, dest.pos), c.Clip)
+				col := path.Color(objects, lights, c.BGColor, depth)
 				colorChan <- col.V3()
 			}()
 
 			//Pause before we run too many GoRoutines
-			if chanCount >= PathGoRoutine {
+			if chanCount >= pathGoRoutine {
 				select {
 				case c := <-colorChan:
 					color = AddV3(color, c)
@@ -81,7 +81,7 @@ func (c Camera) pathTrace(objects []split, lights *[]Light, destImage *Image) *I
 			}
 		}
 
-		colorAvg := MulV3(1/float64(PathCount), color)
+		colorAvg := MulV3(1/float64(pathCount), color)
 		destImage.SetPixel(dest.x, dest.y, colorAvg.RGB())
 
 		//Save a checkpoint

@@ -22,8 +22,8 @@ type Camera struct {
 //Render renders the objects using the given camera
 func (c Camera) Render(objects []split, lights *[]Light, out *Image) *Image {
 	upVector, sideVector := c.stepVectors()
-	upVector = MulV3(1/float64(SUB_PIXELS), upVector)
-	sideVector = MulV3(1/float64(SUB_PIXELS), sideVector)
+	upVector = MulV3(1/float64(subPixles), upVector)
+	sideVector = MulV3(1/float64(subPixles), sideVector)
 	progress := progressBar{
 		total: c.Width * c.Height,
 		len:   70,
@@ -35,11 +35,11 @@ func (c Camera) Render(objects []split, lights *[]Light, out *Image) *Image {
 		for y := -c.Height / 2; y < c.Height/2; y++ {
 			//create a new ray pointing at the viewport
 			rg := RayGroup{}
-			for sx := 0; sx < SUB_PIXELS; sx++ {
-				for sy := 0; sy < SUB_PIXELS; sy++ {
+			for sx := 0; sx < subPixles; sx++ {
+				for sy := 0; sy < subPixles; sy++ {
 					r := Ray{
 						Origin:       c.Fpoint,
-						Dest:         AddV3(AddV3(c.Lpoint, MulV3(float64(x*SUB_PIXELS+sx), upVector)), MulV3(float64(y*SUB_PIXELS+sy), sideVector)),
+						Dest:         AddV3(AddV3(c.Lpoint, MulV3(float64(x*subPixles+sx), upVector)), MulV3(float64(y*subPixles+sy), sideVector)),
 						MaxLength:    c.Clip,
 						BGColor:      c.BGColor,
 						AmbientLight: c.AmbientLight,
@@ -47,7 +47,7 @@ func (c Camera) Render(objects []split, lights *[]Light, out *Image) *Image {
 						Objects:      objects,
 						Lights:       lights,
 					}
-					r.Jitter(sideVector.x * 2 / float64(SUB_PIXELS))
+					r.Jitter(sideVector.x * 2 / float64(subPixles))
 					rg = append(rg, &r)
 				}
 			}
@@ -55,7 +55,7 @@ func (c Camera) Render(objects []split, lights *[]Light, out *Image) *Image {
 			progress.Update()
 			progress.Draw()
 
-			out.SetPixel(x+c.Width/2, y+c.Height/2, rg.Color(DEPTH))
+			out.SetPixel(x+c.Width/2, y+c.Height/2, rg.Color(depth))
 
 			//Save a checkpoint
 			if count%300 == 0 {

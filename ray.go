@@ -168,7 +168,7 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 		reflectV3 := Unit(ReflectV3(r.Dir(), o.Normal(point)))
 		apex := AddV3(point, MulV3(0.000000001, reflectV3))
 
-		for i := 0; i < REFLECT_RAYS; i++ {
+		for i := 0; i < reflectRays; i++ {
 			flect := Ray{
 				Origin:       apex,
 				Dest:         AddV3(apex, reflectV3),
@@ -205,7 +205,7 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 		tdir := AddV3(p1, MulV3(p3, N))
 		apex := AddV3(point, MulV3(0.0001, tdir))
 		tRay := RayGroup{}
-		for i := 0; i < TRANS_RAYS; i++ {
+		for i := 0; i < transparentRays; i++ {
 			tr := Ray{
 				Origin:       apex,
 				Dest:         AddV3(apex, tdir),
@@ -225,6 +225,7 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 	return AddV3(transColor, AddV3(reflectColor, color)).RGB()
 }
 
+// RayGroup is a slice of ray objects that can be run in paralell
 type RayGroup []*Ray
 
 func (rg RayGroup) Color(depth int) RGB {
