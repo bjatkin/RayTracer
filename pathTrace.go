@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func (c Camera) pathTrace(objects []split, lights *[]Light, destImage *Image) *Image {
+func (c Camera) pathTrace(objects []Split, lights *[]Light, destImage *Image) *Image {
 	upVector, sideVector := c.stepVectors()
 
 	type destination struct {

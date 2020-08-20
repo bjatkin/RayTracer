@@ -10,7 +10,7 @@ type Ray struct {
 	Origin       V3
 	Dest         V3
 	Children     *[]Ray
-	Objects      []split
+	Objects      []Split
 	Lights       *[]Light
 	MaxLength    float64
 	BGColor      RGB

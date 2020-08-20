@@ -20,7 +20,7 @@ type Camera struct {
 }
 
 //Render renders the objects using the given camera
-func (c Camera) Render(objects []split, lights *[]Light, out *Image) *Image {
+func (c Camera) Render(objects []Split, lights *[]Light, out *Image) *Image {
 	upVector, sideVector := c.stepVectors()
 	upVector = MulV3(1/float64(subPixles), upVector)
 	sideVector = MulV3(1/float64(subPixles), sideVector)

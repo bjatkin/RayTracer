@@ -1,6 +1,6 @@
 package main
 
-type medianSplit []split
+type medianSplit []Split
 
 func (split medianSplit) itter(p *path) splitItter {
 	ret := splitItter{oIndex: -1}
@@ -13,12 +13,12 @@ func (split medianSplit) itter(p *path) splitItter {
 }
 
 type splitItter struct {
-	splits []split
+	splits []Split
 	sIndex int
 	oIndex int
 }
 
-func splitItterable(splits []split, r *Ray) splitItter {
+func splitItterable(splits []Split, r *Ray) splitItter {
 	ret := splitItter{oIndex: -1}
 	for _, s := range splits {
 		if s.bound.Intersect(r) {
@@ -52,12 +52,14 @@ func (si *splitItter) Obj() Object {
 	return ret
 }
 
-type split struct {
+// Split is an oct-tree structure used to subdivide the
+// scean for faster rendering
+type Split struct {
 	bound   boundBox
 	objects []Object
 }
 
-func BoundingBox(objs []Object) split {
+func BoundingBox(objs []Object) Split {
 	start := objs[0].BoundBox()
 	min := start.p1
 	max := start.p2
@@ -71,7 +73,7 @@ func BoundingBox(objs []Object) split {
 		max = MaxV3(max, bb.p2)
 	}
 
-	return split{
+	return Split{
 		bound: boundBox{
 			p1: min,
 			p2: max,
@@ -80,6 +82,7 @@ func BoundingBox(objs []Object) split {
 	}
 }
 
+// SplitBox splits a bounding box, and it's objects, into 2 sub-boxes
 func SplitBox(b boundBox) (boundBox, boundBox) {
 	min, max := b.p1, b.p2
 	magX := max.x - min.x
@@ -108,10 +111,12 @@ func SplitBox(b boundBox) (boundBox, boundBox) {
 		}
 }
 
-func GenerateSplit(start split, objCount, splitCount int) []split {
+// GenerateSplit splits a scean into several smaller
+// sections making rendering faster
+func GenerateSplit(start Split, objCount, splitCount int) []Split {
 	//Split the box along it's greatest axis
 	box1, box2 := SplitBox(start.bound)
-	split1, split2 := split{bound: box1}, split{bound: box2}
+	split1, split2 := Split{bound: box1}, Split{bound: box2}
 
 	//Check how many objects are in b1 and 2
 	for _, o := range start.objects {
@@ -125,7 +130,7 @@ func GenerateSplit(start split, objCount, splitCount int) []split {
 		}
 	}
 
-	ret := []split{}
+	ret := []Split{}
 	if len(split1.objects) < objCount || splitCount == 0 {
 		//Add this region to the list of regions
 		ret = appendSplit(ret, split1)
@@ -151,7 +156,7 @@ func GenerateSplit(start split, objCount, splitCount int) []split {
 	return ret //The full data structure
 }
 
-func appendSplit(a []split, b split) []split {
+func appendSplit(a []Split, b Split) []Split {
 	if len(b.objects) > 0 {
 		a = append(a, b)
 	}
