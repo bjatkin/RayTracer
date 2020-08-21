@@ -55,10 +55,11 @@ func (si *splitItter) Obj() Object {
 // Split is an oct-tree structure used to subdivide the
 // scean for faster rendering
 type Split struct {
-	bound   boundBox
+	bound   BoundBox
 	objects []Object
 }
 
+// BoundingBox split the object into nwew smaller bounding boxes
 func BoundingBox(objs []Object) Split {
 	start := objs[0].BoundBox()
 	min := start.p1
@@ -74,7 +75,7 @@ func BoundingBox(objs []Object) Split {
 	}
 
 	return Split{
-		bound: boundBox{
+		bound: BoundBox{
 			p1: min,
 			p2: max,
 		},
@@ -83,7 +84,7 @@ func BoundingBox(objs []Object) Split {
 }
 
 // SplitBox splits a bounding box, and it's objects, into 2 sub-boxes
-func SplitBox(b boundBox) (boundBox, boundBox) {
+func SplitBox(b BoundBox) (BoundBox, BoundBox) {
 	min, max := b.p1, b.p2
 	magX := max.x - min.x
 	magY := max.y - min.y
@@ -101,11 +102,11 @@ func SplitBox(b boundBox) (boundBox, boundBox) {
 		diff.z *= 0.5
 	}
 
-	return boundBox{
+	return BoundBox{
 			p1: SubV3(max, diff),
 			p2: max,
 		},
-		boundBox{
+		BoundBox{
 			p1: min,
 			p2: AddV3(min, diff),
 		}

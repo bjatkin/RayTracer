@@ -6,7 +6,13 @@ types of lights (area light, point light). It uses oct-tree splitting and boundi
 to speed up the render times. It also makes use of go-routines to calculate multiples
 rays at a time.
 
-# How to use
+# How To Use
+
+You can complie this project by running the build.sh script. This will produce a binary called tracer.
+you can run tracer 2 optional arguments. ```tracer [ray|path|both] [output file name]``` ray with run
+the ray tracer, path will run the path tracer, both will run both the ray tracer and path tracer. The
+output file is the location where the output will be saved. Ray traced images will be prefaced with RT_,
+Path traced files will be prefaced with PT_.
 
 # Path Traced Examples
 

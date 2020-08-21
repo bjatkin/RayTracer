@@ -10,7 +10,7 @@ type Object interface {
 	IntersectPath(*path) (float64, bool)
 	GetMat() Material
 	Normal(V3) V3
-	BoundBox() boundBox
+	BoundBox() BoundBox
 }
 
 //Sphere is a sphere that can be rendered
@@ -18,7 +18,7 @@ type Sphere struct {
 	Loc         V3
 	Rad         float64
 	Mat         Material
-	boundingBox boundBox
+	boundingBox BoundBox
 	setBBox     bool
 }
 
@@ -35,19 +35,22 @@ func (s *Sphere) genBBox() {
 		z: s.Loc.z + s.Rad,
 	}
 
-	s.boundingBox = boundBox{p1: min, p2: max}
+	s.boundingBox = BoundBox{p1: min, p2: max}
 	s.setBBox = true
 }
 
+// GetMat returns the material of the sphere
 func (s Sphere) GetMat() Material {
 	return s.Mat
 }
 
+// Normal returns the normal of the sphere at given point
 func (s Sphere) Normal(pt V3) V3 {
 	return Unit(SubV3(pt, s.Loc))
 }
 
-func (s Sphere) BoundBox() boundBox {
+// BoundBox returns a bounding box the encloses the full sphere
+func (s Sphere) BoundBox() BoundBox {
 	if !s.setBBox {
 		s.genBBox()
 	}
@@ -96,6 +99,7 @@ func (s Sphere) Intersect(ray *Ray) (float64, V3, bool) {
 	return 0, V3{}, false
 }
 
+// IntersectPath returns the nearist intersection of the path and the sphere
 func (s Sphere) IntersectPath(path *path) (float64, bool) {
 	//check if we intersect the bounding box
 	if !s.BoundBox().IntersectPath(path) {

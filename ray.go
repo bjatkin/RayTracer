@@ -228,6 +228,7 @@ func (r *Ray) calculateColor(point V3, o Object, depth int) RGB {
 // RayGroup is a slice of ray objects that can be run in paralell
 type RayGroup []*Ray
 
+// Color returns the average color of all the rays returned by the ray group
 func (rg RayGroup) Color(depth int) RGB {
 	colors := make(chan V3, len(rg))
 	for _, r := range rg {

@@ -38,7 +38,7 @@ func main() {
 			rayImage,
 		)
 
-		pngFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/RT_" + fileName + ".png")
+		pngFile, err := os.Create("RT_" + fileName + ".png")
 		if err != nil {
 			fmt.Printf("There was an error: %s", err.Error())
 			return
@@ -58,7 +58,7 @@ func main() {
 			pathFile,
 		)
 
-		pngFile, err := os.Create("/Users/brandon/go/src/Projects/School/RayTracer/PT_" + fileName + ".png")
+		pngFile, err := os.Create("PT_" + fileName + ".png")
 		if err != nil {
 			fmt.Printf("There was an error: %s", err.Error())
 			return

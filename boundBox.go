@@ -2,21 +2,24 @@ package main
 
 import "fmt"
 
-type boundBox struct {
+// BoundBox is a bounding box used for dividing the scean
+type BoundBox struct {
 	p1, p2 V3
 }
 
-func (bb boundBox) String() string {
+func (bb BoundBox) String() string {
 	return fmt.Sprintf("P1: %f, %f, %f / P2: %f, %f, %f", bb.p1.x, bb.p1.y, bb.p1.z, bb.p2.x, bb.p2.y, bb.p2.z)
 }
 
-func (bb boundBox) Overlap(ob boundBox) bool {
+// Overlap returns true if the two bounding boxes collide
+func (bb BoundBox) Overlap(ob BoundBox) bool {
 	return bb.p1.x <= ob.p2.x && ob.p1.x <= bb.p2.x &&
 		bb.p1.y <= ob.p2.y && ob.p1.y <= bb.p2.y &&
 		bb.p1.z <= ob.p2.z && ob.p1.z <= bb.p2.z
 }
 
-func (bb boundBox) Intersect(r *Ray) bool {
+// Intersect returns true if the ray and bounding box intersect
+func (bb BoundBox) Intersect(r *Ray) bool {
 	tmin := (bb.p1.x - r.Origin.x) / r.Dir().x
 	tmax := (bb.p2.x - r.Origin.x) / r.Dir().x
 
@@ -65,7 +68,8 @@ func (bb boundBox) Intersect(r *Ray) bool {
 	return true
 }
 
-func (bb boundBox) IntersectPath(p *path) bool {
+// IntersectPath returns true if the path intersects with the bounding box
+func (bb BoundBox) IntersectPath(p *path) bool {
 	tmin := (bb.p1.x - p.Origin.x) / p.Dir().x
 	tmax := (bb.p2.x - p.Origin.x) / p.Dir().x
 

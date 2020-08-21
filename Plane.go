@@ -5,7 +5,7 @@ type Plane struct {
 	Points      [3]V3
 	Mat         Material
 	Flipped     bool
-	boundingBox boundBox
+	boundingBox BoundBox
 	setBBox     bool
 }
 
@@ -37,14 +37,16 @@ func (p *Plane) genBBox() {
 	//Prevent zero width/depth/height errors
 	min = SubV3(min, dist)
 	max = AddV3(max, dist)
-	p.boundingBox = boundBox{p1: min, p2: max}
+	p.boundingBox = BoundBox{p1: min, p2: max}
 	p.setBBox = true
 }
 
+// GetMat returns the material of the plane
 func (p Plane) GetMat() Material {
 	return p.Mat
 }
 
+// Normal returns the normal of the plane
 func (p Plane) Normal(pt V3) V3 {
 	v0 := p.Points[0]
 	v1 := p.Points[1]
@@ -58,7 +60,8 @@ func (p Plane) Normal(pt V3) V3 {
 	return Unit(CrossV3(edge1, edge2))
 }
 
-func (p Plane) BoundBox() boundBox {
+// BoundBox returns the bounding box that contains the plane
+func (p Plane) BoundBox() BoundBox {
 	if !p.setBBox {
 		p.genBBox()
 	}
@@ -110,6 +113,7 @@ func (p Plane) Intersect(ray *Ray) (float64, V3, bool) {
 	return 0.0, V3{}, false // we intersected with a line
 }
 
+// IntersectPath returns the intersect of the path and the plane
 func (p Plane) IntersectPath(path *path) (float64, bool) {
 	//check if we intersect the bounding box
 	if !p.BoundBox().IntersectPath(path) {

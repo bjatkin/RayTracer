@@ -27,8 +27,10 @@ func (l *PointLight) GetIntensity() float64 {
 	return 0
 }
 
-// TODO finish this as a sphere
+// Intersect is the intersection of a path and the point light
 func (l *PointLight) Intersect(p *path) (float64, bool) {
+	// This is increadible unlikely so rather than waste the
+	// time, just return false
 	return 0, false
 }
 
@@ -62,7 +64,7 @@ func (l *DirLight) GetIntensity() float64 {
 	return 0
 }
 
-//TODO finish this with dot products stuff
+// Intersect returns the intersection between a path and the directional light
 func (l *DirLight) Intersect(p *path) (float64, bool) {
 	return 0, false
 }
